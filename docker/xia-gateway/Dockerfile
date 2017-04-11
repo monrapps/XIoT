@@ -1,7 +1,8 @@
 FROM ubuntu:latest
 
-RUN apt-get -y update && apt-get install -y git libxml2 libxml2-dev libssl-dev libprotobuf-dev protobuf-compiler python-protobuf python-networkx python-nacl python-pip python-tk python-dev python-requests python-crypto build-essential openssl swig \
+RUN apt-get -y update && apt-get install -y git libxml2 libxml2-dev libssl-dev libprotobuf-dev protobuf-compiler python-protobuf python-networkx python-nacl python-pip python-tk python-dev python-requests python-crypto build-essential openssl swig ant openjdk-8-jdk net-tools \
  \
+&& cd ~ \
 && git clone https://github.com/XIA-Project/xia-core.git \
 && cd xia-core \
 && git checkout xia-v2 \
@@ -16,4 +17,8 @@ RUN apt-get -y update && apt-get install -y git libxml2 libxml2-dev libssl-dev l
  \
 && apt-get install -y python-twisted \
  \
-&& git clone https://github.com/monrapps/contiki.git
+&& cd ~ \
+&& git clone https://github.com/monrapps/contiki.git \
+&& cd contiki \
+&& git submodule update --init 
+
