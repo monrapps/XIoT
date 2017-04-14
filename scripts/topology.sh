@@ -1,5 +1,14 @@
 #!/bin/sh
 
+if [ $# -eq 0 ] ; then
+   echo
+   echo "No arguments supplied"
+   echo "Usage: ./topology.sh monra/xia-server monra/xia-gateway-router 1 monra/xia-client-router 1 monra/xia-gateway 2 monra/xia-client 3 10 8 100 150"
+   echo
+   exit
+fi
+
+
 echo
 echo
 
@@ -58,4 +67,7 @@ do
       echo "Client $z initialized"
    done
 done
+
+echo
+echo
 
