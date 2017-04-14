@@ -1,28 +1,61 @@
 #!/bin/sh
 
-echo "Clients per Client-Router: $1"
-echo "Client-Routers: $2"
-echo "Gateways per Gateway-Router: $3"
-echo "Gateway-Routers: $4"
-echo "Motes per Gateway: $5"
-echo "Data Size: $6"
-echo "Requests: $7"
+echo
+echo
+
+echo "Server Image: $1"
+echo
+echo "Gateway Routers Image: $2"
+echo "Gateway Routers: $3"
+echo
+echo "Client Routers Image: $4"
+echo "Client Routers: $5"
+echo
+echo "Gateways Image: $6"
+echo "Gateways per Gateway-Router: $7"
+echo
+echo "Clients Image: $8"
+echo "Clients per Client-Router: $9"
+echo
+echo "Motes per Gateway: $10"
+echo "Data Size: $11 bytes"
+echo "Requests: $12"
+echo "Timeout: $13 ms" 
+
+echo
+echo
 
 
-for i in $(seq 1 $2)
+#sudo docker network create -d Server_Network
+#sudo docker run -d --net=Server_Network --name Server $2  
+echo "Server initialized"   
+
+for i in $(seq 1 $3)
 do
-   echo "Clients-Router $i initialized"
-   for j in $(seq 1 $1)
+   #sudo docker network create -d Gateway_Network_$i
+   #sudo docker run -d --net=Gateway_Network_$i --name Gateway_Router_$i $2   
+   echo "Gateway Router $i initialized"   
+   for j in $(seq 1 $7)
    do
-      echo "Client `expr $i \* $j` initialized"
+      #sudo docker run -d --net=Gateway_Network_$i --name Gateway_$i $6
+      z="$(( $7 * ( $i - 1 ) + $j ))"
+      echo "Gateway $z initialized"
+      done
+done
+
+echo
+echo
+
+for i in $(seq 1 $5)
+do
+   #sudo docker network create -d Client_Network_$i
+   #sudo docker run -d --net=Client_Network_$i --name Client_Router_$i $4
+   echo "Clients Router $i initialized"
+   for j in $(seq 1 $9)
+   do
+      z="$(( $9 * ( $i - 1 ) + $j ))"
+      #sudo docker run -d --net=Client_Network_$i --name Client_$z $8     
+      echo "Client $z initialized"
    done
 done
 
-for i in $(seq 1 $4)
-do
-   echo "Gateway-Router $i initialized"
-   for j in $(seq 1 $3)
-   do
-      echo "Gateway `expr $i \* $j` initialized"
-   done
-done
