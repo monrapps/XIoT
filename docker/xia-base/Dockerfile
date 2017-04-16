@@ -2,5 +2,5 @@ FROM ubuntu:latest
 
 COPY . ./
 
-RUN /buildnode.sh
+RUN /install-xia.sh
 
