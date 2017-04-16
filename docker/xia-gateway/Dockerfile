@@ -18,7 +18,9 @@ RUN apt-get -y update && apt-get install -y git libxml2 libxml2-dev libssl-dev l
 && apt-get install -y python-twisted \
  \
 && cd ~ \
-&& git clone https://github.com/monrapps/contiki.git \
+&& git clone https://github.com/contiki-os/contiki.git \
 && cd contiki \
-&& git submodule update --init 
+&& git submodule update --init \
+&& export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8
+
 
