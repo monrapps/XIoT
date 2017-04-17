@@ -1,19 +1,5 @@
 #!/bin/sh
 
-# pacotes para cooja
-ant
-openjdk-8-jdk
-
-
-git submodule update --init # necessario para cooja
-
-
-# tools
-net-tools
-#ssh # talvez
-
-
 # compilar hello-world do cc25xx
 sudo apt-get -y install binutils-msp430 gcc-msp430 msp430mcu gcc-avr avr-libc msp430-libc
 
-export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8 # corrige problema do ASCII
