@@ -45,9 +45,9 @@ do
    #sudo docker run -d --net=Gateway_Network_$i --name Gateway_Router_$i $2   
    echo "Gateway Router $i initialized"   
    for j in $(seq 1 $7)
-   do
-      #sudo docker run -d --net=Gateway_Network_$i --name Gateway_$i $6
+   do      
       z="$(( $7 * ( $i - 1 ) + $j ))"
+      #sudo docker run -d --net=Gateway_Network_$i --name Gateway_$i $6
       echo "Gateway $z initialized"
       done
 done
