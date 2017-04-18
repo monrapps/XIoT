@@ -18,6 +18,7 @@ apt-get install -y libffi-dev python-crypto python-protobuf python-networkx pyth
 
 # tools
 #apt-get install -y vim tmux ack-grep curl socat netcat wget stunnel
+apt-get install -y net-tools
 
 #pip install --upgrade pip
 #pip install pynacl
