@@ -7,5 +7,7 @@ ENV LC_ALL en_US.UTF-8
 
 COPY . ./
 
-RUN /install-xia.sh
+RUN /install-packages.sh
+RUN /get-xia.sh
+RUN /build-xia.sh
 

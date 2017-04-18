@@ -1,6 +1,7 @@
 #!/bin/sh
 
 cd xia-core/bin
-./xianet -r start
+./xianet -r -n start
 
 tail -f /var/log/dmesg
+
