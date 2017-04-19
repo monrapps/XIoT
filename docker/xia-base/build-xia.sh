@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd xia-core
-DEBUG=0 ./configure
+cd /xia-core
+./configure
 make
 
