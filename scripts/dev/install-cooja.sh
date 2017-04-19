@@ -9,7 +9,6 @@ if [ ! -d "contiki" ]; then
 else
 	cd contiki
 	git pull
-	make clean
 	cd ..	
 fi
 
