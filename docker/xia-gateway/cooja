@@ -1,0 +1,2 @@
+java -mx512m -jar $CONTIKI/tools/cooja/dist/cooja.jar -nogui="$CONTIKI/examples/ipv6/rpl-udp/rpl-udp.csc" -contiki="$CONTIKI"
+
