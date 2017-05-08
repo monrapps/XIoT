@@ -16,6 +16,7 @@ RUN apt-get install -y swig
 RUN apt-get install -y python-argparse
 RUN apt-get install -y python-pygame
 RUN apt-get install -y libffi-dev python-crypto python-protobuf python-networkx python-pip
+RUN apt-get install -y netcat
 
 # tools
 #RUN apt-get install -y vim tmux ack-grep curl socat netcat wget stunnel
