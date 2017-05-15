@@ -44,6 +44,14 @@ setup()
 	TIMEOUT=1000
 	DATASIZE=8
 	REQUESTS=1
+	
+	FIA=xia
+	
+	CLIENTIMAGE=$FIA-client
+	GATEWAYIMAGE=$FIA-gateway
+	CLIENTROUTERIMAGE=$FIA-router
+	GATEWAYROUTERIMAGE=$FIA-router
+	SERVERIMAGE=$FIA-server
 
 	local OPTARG=$2
 
@@ -98,6 +106,14 @@ print_config()
 	echo Requests: $REQUESTS
 	echo Datasize: $DATASIZE bytes
 	echo
+	echo Future Internet Architecture: $FIA
+	echo
+	echo Server Image: $SERVERIMAGE
+	echo Gateway Router Image: $GATEWAYROUTERIMAGE
+	echo Client Router Image: $CLIENTROUTERIMAGE
+	echo Gateway Image: $GATEWAYIMAGE
+	echo Client Image: $CLIENTIMAGE
+	echo
 }
 
 stop_all()
@@ -120,58 +136,63 @@ build_all()
 {
 	cd $XIOTDIR/docker
 
-	cd xia-base
-	docker build -t xia-base .
+	cd $FIA-base
+	docker build -t $FIA-base .
 	cd ..
 
-	cd xia-server
-	docker build -t xia-server .
+	cd $SERVERIMAGE
+	docker build -t $SERVERIMAGE .
+	cd ..
+	
+	cd $GATEWAYROUTERIMAGE
+	docker build -t $GATEWAYROUTERIMAGE .
+	cd ..
+	
+	cd $CLIENTROUTERIMAGE
+	docker build -t $CLIENTROUTERIMAGE .
 	cd ..
 
-	cd xia-router
-	docker build -t xia-router .
+	cd $GATEWAYIMAGE
+	docker build -t $GATEWAYIMAGE .
 	cd ..
-
-	cd xia-gateway
-	docker build -t xia-gateway .
-	cd ..
-
-	cd xia-client
-	docker build -t xia-client .
+	
+	cd $CLIENTIMAGE
+	docker build -t $CLIENTIMAGE .
 	cd ..
 }
 
-star_toppology()
+star_topology()
 {
-	#sudo docker network create -d Server_Network
-	#sudo docker run -d --net=Server_Network --name Server $2  
+	#docker network create -d Server_Network
+	#docker run -d --net=Server_Network --name Server $SERVERIMAGE
 	echo "Server initialized"   
-
-	for i in $(seq 1 $3)
+	echo
+	for i in $(seq 1 $GATEWAYROUTERS)
 	do
-	   #sudo docker network create -d Gateway_Network_$i
-	   #sudo docker run -d --net=Gateway_Network_$i --name Gateway_Router_$i $2   
-	   echo "Gateway Router $i initialized"   
-	   for j in $(seq 1 $7)
-	   do      
-	      z="$(( $7 * ( $i - 1 ) + $j ))"
-	      #sudo docker run -d --net=Gateway_Network_$i --name Gateway_$i $6
-	      echo "Gateway $z initialized"
-	      done
+		#docker network create -d Gateway_Network_$i
+		#docker run -d --net=Gateway_Network_$i --name Gateway_Router_$i $GATEWAYROUTERIMAGE   
+		echo "Gateway Router $i initialized"   
+		for j in $(seq 1 $GATEWAYS)
+		do      
+	   		z="$(( $GATEWAYS * ( $i - 1 ) + $j ))"
+	   		#docker run -d --net=Gateway_Network_$i --name Gateway_$i $GATEWAYIMAGE
+	   		echo "Gateway $z initialized"
+	   	done
+		echo
 	done
-	
 		
-	for i in $(seq 1 $5)
+	for i in $(seq 1 $CLIENTROUTERS)
 	do
-	   #sudo docker network create -d Client_Network_$i
-	   #sudo docker run -d --net=Client_Network_$i --name Client_Router_$i $4
-	   echo "Clients Router $i initialized"
-	   for j in $(seq 1 $9)
-	   do
-	      z="$(( $9 * ( $i - 1 ) + $j ))"
-	      #sudo docker run -d --net=Client_Network_$i --name Client_$z $8     
-	      echo "Client $z initialized"
-	   done
+		#docker network create -d Client_Network_$i
+		#docker run -d --net=Client_Network_$i --name Client_Router_$i $CLIENTROUTERIMAGE
+		echo "Clients Router $i initialized"
+		for j in $(seq 1 $CLIENTS)
+		do
+			z="$(( $CLIENTS * ( $i - 1 ) + $j ))"
+			#docker run -d --net=Client_Network_$i --name Client_$z $CLIENTIMAGE     
+			echo "Client $z initialized"
+		done
+		echo
 	done
 }
 
@@ -183,14 +204,14 @@ timeex()
 
 	for i in `seq 1 $GATEWAYS`;
 	do
-	    docker run -d xia-gateway &
+	    docker run -d $GATEWAYIMAGE &
 	done
 
 	sleep 5
 
 	for i in `seq 1 $CLIENTS`;
 	do
- 	   docker run xia-client &
+ 	   docker run $CLIENTIMAGE &
 	done
 }
 
@@ -204,6 +225,10 @@ case $1 in
 	time)
 		print_config
 		timeex
+		;;
+	start)
+		print_config
+		star_topology
 		;;
 	build)
 		build_all
