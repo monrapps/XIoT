@@ -1,0 +1,192 @@
+#!/bin/bash
+#
+# Copyright 2017 MonRá
+#
+
+XIOTDIR="$(dirname "$(cd "$(dirname "$0")" && pwd)")"
+NAME=`basename $0`
+
+help()
+{
+	cat << EOF
+
+Start or stop the XIoT network testing services.
+
+usage: $NAME [-cgCGmdtr] [-c <clients_per_router>] [-g <gateways_per_router>] [-m <motes_per_gateway>]
+             [-C <client_routers>] [-G <gateway_routers>] [-r <resquests>]
+             [-t <timeout>] [-d <data_size>]  [start|stop|restart|kill]
+where:
+  -c Clients per Clients Routers
+  -g Gateways per Gateways Routers
+  -m Motes per Gateway
+  -C Client Routers
+  -G Gateway Routers
+  -d Data size (bytes)
+  -r Requests
+  -t Timeout (ms)
+  
+  start   - starts the network processes if not already running
+  stop    - stops the processes
+  restart - stops then starts the processes
+  kill    - kill all services including orphaned services
+
+EOF
+	exit 0
+}
+
+setup()
+{
+	CLIENTS=1
+	CLIENTROUTERS=1
+	GATEWAYS=1
+	GATEWAYROUTERS=1
+	MOTES=2
+	TIMEOUT=1000
+	DATASIZE=8
+	REQUESTS=1
+
+	local OPTARG=$2
+
+	while getopts "c:g:C:G:m:d:t:r" opt; do
+		case $opt in			
+			c)
+				CLIENTS=$OPTARG
+				;;
+			g)
+				GATEWAYS=$OPTARG
+				;;
+			C)
+				CLIENTROUTERS=$OPTARG
+				;;
+			G)
+				GATEWAYROUTERS=$OPTARG
+				;;
+			m)
+				MOTES=$OPTARG
+				;;
+			d)
+				DATASIZE=$OPTARG
+				;;
+			t)
+				TIMEOUT=$OPTARG
+				;;
+			r)
+				REQUESTS=$OPTARG
+				;;			
+			h)
+				help
+				;;
+			\?)
+				printf "\nInvalid option: -$OPTARG\n" >&2
+				help
+				;;
+		esac
+	done
+}
+
+print_config()
+{
+	echo
+	echo Config:
+	echo
+	echo Clients: $CLIENTS
+	echo Gateways: $GATEWAYS
+	echo Client Routers: $CLIENTROUTERS
+	echo Gateway Routers: $GATEWAYROUTERS
+	echo Motes: $MOTES
+	echo Timeout: $TIMEOUT ms
+	echo Requests: $REQUESTS
+	echo Datasize: $DATASIZE bytes
+	echo
+}
+
+stop_all()
+{
+	docker stop $(docker ps -a -q)
+	docker rm $(docker ps -a -q)
+}
+
+kill_all()
+{
+	docker kill $(docker ps -a -q)
+	docker rm $(docker ps -a -q)
+}
+prune_networks()
+{
+	docker network prune
+}
+
+build_all()
+{
+	cd $XIOTDIR/docker
+
+	cd xia-base
+	docker build -t xia-base .
+	cd ..
+
+	cd xia-server
+	docker build -t xia-server .
+	cd ..
+
+	cd xia-router
+	docker build -t xia-router .
+	cd ..
+
+	cd xia-gateway
+	docker build -t xia-gateway .
+	cd ..
+
+	cd xia-client
+	docker build -t xia-client .
+	cd ..
+}
+
+timeex()
+{
+	docker run -d xia-server
+
+	sleep 5
+
+	for i in `seq 1 $GATEWAYS`;
+	do
+	    docker run -d xia-gateway &
+	done
+
+	sleep 5
+
+	for i in `seq 1 $CLIENTS`;
+	do
+ 	   docker run xia-client &
+	done
+}
+
+#
+# SCRIPT STARTS HERE
+#
+setup $@
+shift $((OPTIND-1))
+
+case $1 in
+	time)
+		print_config
+		timeex
+		;;
+	build)
+		build_all
+		;;
+	prune)
+		prune_networks
+		;;
+	stop)
+		stop_all
+		;;
+	kill)
+		kill_all
+		;;
+	*)
+		printf "\nInvalid command\n" >&2
+		help
+		;;
+esac
+
+
