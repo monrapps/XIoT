@@ -141,6 +141,40 @@ build_all()
 	cd ..
 }
 
+star_toppology()
+{
+	#sudo docker network create -d Server_Network
+	#sudo docker run -d --net=Server_Network --name Server $2  
+	echo "Server initialized"   
+
+	for i in $(seq 1 $3)
+	do
+	   #sudo docker network create -d Gateway_Network_$i
+	   #sudo docker run -d --net=Gateway_Network_$i --name Gateway_Router_$i $2   
+	   echo "Gateway Router $i initialized"   
+	   for j in $(seq 1 $7)
+	   do      
+	      z="$(( $7 * ( $i - 1 ) + $j ))"
+	      #sudo docker run -d --net=Gateway_Network_$i --name Gateway_$i $6
+	      echo "Gateway $z initialized"
+	      done
+	done
+	
+		
+	for i in $(seq 1 $5)
+	do
+	   #sudo docker network create -d Client_Network_$i
+	   #sudo docker run -d --net=Client_Network_$i --name Client_Router_$i $4
+	   echo "Clients Router $i initialized"
+	   for j in $(seq 1 $9)
+	   do
+	      z="$(( $9 * ( $i - 1 ) + $j ))"
+	      #sudo docker run -d --net=Client_Network_$i --name Client_$z $8     
+	      echo "Client $z initialized"
+	   done
+	done
+}
+
 timeex()
 {
 	docker run -d xia-server
