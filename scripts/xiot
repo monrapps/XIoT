@@ -163,33 +163,35 @@ build_all()
 
 star_topology()
 {
-	#docker network create -d Server_Network
+	docker network create Server_Network
 	#docker run -d --net=Server_Network --name Server $SERVERIMAGE
+	docker run -d --name Server $SERVERIMAGE
+	sleep 5
 	echo "Server initialized"   
 	echo
 	for i in $(seq 1 $GATEWAYROUTERS)
 	do
-		#docker network create -d Gateway_Network_$i
-		#docker run -d --net=Gateway_Network_$i --name Gateway_Router_$i $GATEWAYROUTERIMAGE   
+		docker network create Gateway_Network_$i
+		docker run -d --net=Gateway_Network_$i --name Gateway_Router_$i $GATEWAYROUTERIMAGE   
 		echo "Gateway Router $i initialized"   
 		for j in $(seq 1 $GATEWAYS)
 		do      
 	   		z="$(( $GATEWAYS * ( $i - 1 ) + $j ))"
-	   		#docker run -d --net=Gateway_Network_$i --name Gateway_$i $GATEWAYIMAGE
+	   		docker run -d --net=Gateway_Network_$i --name Gateway_$i $GATEWAYIMAGE
 	   		echo "Gateway $z initialized"
 	   	done
 		echo
 	done
-		
+	sleep 5
 	for i in $(seq 1 $CLIENTROUTERS)
 	do
-		#docker network create -d Client_Network_$i
-		#docker run -d --net=Client_Network_$i --name Client_Router_$i $CLIENTROUTERIMAGE
+		docker network create Client_Network_$i
+		docker run -d --net=Client_Network_$i --name Client_Router_$i $CLIENTROUTERIMAGE
 		echo "Clients Router $i initialized"
 		for j in $(seq 1 $CLIENTS)
 		do
 			z="$(( $CLIENTS * ( $i - 1 ) + $j ))"
-			#docker run -d --net=Client_Network_$i --name Client_$z $CLIENTIMAGE     
+			docker run --net=Client_Network_$i --name Client_$z $CLIENTIMAGE     
 			echo "Client $z initialized"
 		done
 		echo
@@ -238,9 +240,11 @@ case $1 in
 		;;
 	stop)
 		stop_all
+		prune_networks
 		;;
 	kill)
 		kill_all
+		prune_networks	
 		;;
 	*)
 		printf "\nInvalid command\n" >&2
