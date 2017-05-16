@@ -1,5 +1,7 @@
 #!/bin/sh
 
+cp /xiotvolume/resolv.conf /xia-core/etc/resolv.conf
+
 cd xia-core/bin
 ./xianet -r start
 

@@ -114,24 +114,35 @@ print_config()
 	echo Gateway Image: $GATEWAYIMAGE
 	echo Client Image: $CLIENTIMAGE
 	echo
-	echo $XIOTDIR
-	echo $0
 }
 
 stop_all()
 {
+	echo "Stoping containers"
 	docker stop $(docker ps -a -q)
 	docker rm $(docker ps -a -q)
+	echo
 }
 
 kill_all()
 {
+	echo "Stoping containers"
 	docker kill $(docker ps -a -q)
 	docker rm $(docker ps -a -q)
+	echo
 }
+
 prune_networks()
 {
 	docker network prune
+}
+
+prune_volumes()
+{
+	echo "Deleting Volume"
+	docker volume rm xiotvolume
+	echo
+	docker volume prune
 }
 
 build_all()
@@ -165,37 +176,52 @@ build_all()
 
 star_topology()
 {
+	echo Data Volume
+	docker volume create xiotvolume
+	echo
+	echo Server Network
 	docker network create Server_Network
-	docker run -d --net=Server_Network --name Server $SERVERIMAGE
-	sleep 5
-	echo "Server initialized"   
+	echo
+	echo Server
+	docker run -v xiotvolume:/xiotvolume -d --net=Server_Network --name Server $SERVERIMAGE
+	sleep 10 
 	echo
 	for i in $(seq 1 $GATEWAYROUTERS)
 	do
+		echo Gateway_Network_$i
 		docker network create Gateway_Network_$i
-		docker run -d --net=Gateway_Network_$i --name Gateway_Router_$i $GATEWAYROUTERIMAGE --link Server  
-		echo "Gateway Router $i initialized"   
+		echo
+		echo "Gateway Router $i"   		
+		docker run -v xiotvolume:/xiotvolume -d --net=Gateway_Network_$i --name Gateway_Router_$i $GATEWAYROUTERIMAGE
+		echo
+		docker network connect Server_Network Gateway_Router_$i
+		#sleep 5
 		for j in $(seq 1 $GATEWAYS)
 		do      
-	   		z="$(( $GATEWAYS * ( $i - 1 ) + $j ))"
-	   		docker run -d --net=Gateway_Network_$i --name Gateway_$i $GATEWAYIMAGE --link Server
-	   		echo "Gateway $z initialized"
+	   		z="$(( $GATEWAYS * ( $i - 1 ) + $j ))"	   		
+	   		echo "Gateway $z"
+	   		docker run -v xiotvolume:/xiotvolume -d --net=Gateway_Network_$i --name Gateway_$i $GATEWAYIMAGE
+	   		echo
 	   	done
-		echo
 	done
 	sleep 5
 	for i in $(seq 1 $CLIENTROUTERS)
 	do
-		docker network create Client_Network_$i
-		docker run -d --net=Client_Network_$i --name Client_Router_$i $CLIENTROUTERIMAGE --link Server
-		echo "Clients Router $i initialized"
+		echo Client_Network_$i
+		docker network create Client_Network_$i	
+		echo		
+		echo "Clients Router $i"	
+		docker run -v xiotvolume:/xiotvolume -d --net=Client_Network_$i --name Client_Router_$i $CLIENTROUTERIMAGE
+		echo
+		docker network connect Server_Network Client_Router_$i
+		#sleep 5
 		for j in $(seq 1 $CLIENTS)
 		do
 			z="$(( $CLIENTS * ( $i - 1 ) + $j ))"
-			docker run --net=Client_Network_$i --name Client_$z $CLIENTIMAGE --link Server    
-			echo "Client $z initialized"
+			echo "Client $z"
+			docker run -v xiotvolume:/xiotvolume --net=Client_Network_$i --name Client_$z $CLIENTIMAGE    
+			echo
 		done
-		echo
 	done
 }
 
@@ -218,6 +244,22 @@ timeex()
 	done
 }
 
+manual_network()
+{
+	docker network create servernet
+	docker network create clientnet
+	docker network create gatewaynet
+	
+	docker run -itd --net=servernet --name server xia-base
+	docker run -itd --net=gatewaynet --name gateway xia-base
+	docker run -itd --net=gatewaynet --name gatewayrouter xia-base
+	docker run -itd --net=clientnet --name client xia-base
+	docker run -itd --net=clientnet --name clientrouter xia-base
+	
+	docker network connect servernet gatewayrouter
+	docker network connect servernet clientrouter
+}
+
 #
 # SCRIPT STARTS HERE
 #
@@ -225,6 +267,9 @@ setup $@
 shift $((OPTIND-1))
 
 case $1 in
+	manual)		
+		manual_network
+		;;
 	time)
 		print_config
 		timeex
@@ -241,14 +286,17 @@ case $1 in
 		;;
 	prune)
 		prune_networks
+		prune_volumes
 		;;
 	stop)
 		stop_all
 		prune_networks
+		prune_volumes
 		;;
 	kill)
 		kill_all
 		prune_networks	
+		prune_volumes
 		;;
 	*)
 		printf "\nInvalid command\n" >&2
