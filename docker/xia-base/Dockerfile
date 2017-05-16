@@ -27,5 +27,5 @@ RUN apt-get install -y net-tools
 
 COPY . ./
 
-RUN /install-xia.sh
+RUN /install-xia
 

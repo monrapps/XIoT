@@ -2,5 +2,5 @@ FROM xia-base
 
 COPY . ./
 
-ENTRYPOINT ["./init.sh"]
+ENTRYPOINT ["./init"]
 

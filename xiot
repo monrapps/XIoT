@@ -3,7 +3,7 @@
 # Copyright 2017 MonRá
 #
 
-XIOTDIR="$(dirname "$(cd "$(dirname "$0")" && pwd)")"
+XIOTDIR="$(cd "$(dirname "$0")" && pwd)"
 NAME=`basename $0`
 
 help()
@@ -114,6 +114,8 @@ print_config()
 	echo Gateway Image: $GATEWAYIMAGE
 	echo Client Image: $CLIENTIMAGE
 	echo
+	echo $XIOTDIR
+	echo $0
 }
 
 stop_all()
@@ -171,12 +173,12 @@ star_topology()
 	for i in $(seq 1 $GATEWAYROUTERS)
 	do
 		docker network create Gateway_Network_$i
-		docker run -d --net=Gateway_Network_$i --name Gateway_Router_$i $GATEWAYROUTERIMAGE   
+		docker run -d --net=Gateway_Network_$i --name Gateway_Router_$i $GATEWAYROUTERIMAGE --link Server  
 		echo "Gateway Router $i initialized"   
 		for j in $(seq 1 $GATEWAYS)
 		do      
 	   		z="$(( $GATEWAYS * ( $i - 1 ) + $j ))"
-	   		docker run -d --net=Gateway_Network_$i --name Gateway_$i $GATEWAYIMAGE
+	   		docker run -d --net=Gateway_Network_$i --name Gateway_$i $GATEWAYIMAGE --link Server
 	   		echo "Gateway $z initialized"
 	   	done
 		echo
@@ -185,12 +187,12 @@ star_topology()
 	for i in $(seq 1 $CLIENTROUTERS)
 	do
 		docker network create Client_Network_$i
-		docker run -d --net=Client_Network_$i --name Client_Router_$i $CLIENTROUTERIMAGE
+		docker run -d --net=Client_Network_$i --name Client_Router_$i $CLIENTROUTERIMAGE --link Server
 		echo "Clients Router $i initialized"
 		for j in $(seq 1 $CLIENTS)
 		do
 			z="$(( $CLIENTS * ( $i - 1 ) + $j ))"
-			docker run --net=Client_Network_$i --name Client_$z $CLIENTIMAGE     
+			docker run --net=Client_Network_$i --name Client_$z $CLIENTIMAGE --link Server    
 			echo "Client $z initialized"
 		done
 		echo
@@ -226,6 +228,9 @@ case $1 in
 	time)
 		print_config
 		timeex
+		;;
+	print)
+		print_config
 		;;
 	start)
 		print_config

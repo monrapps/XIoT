@@ -4,7 +4,7 @@ COPY . ./
 
 #RUN apt-get -y install ant openjdk-8-jdk
 
-#RUN /get-contiki.sh
+#RUN /get-contiki
 
-ENTRYPOINT ["./init.sh"]
+ENTRYPOINT ["./init"]
 
