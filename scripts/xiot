@@ -164,8 +164,7 @@ build_all()
 star_topology()
 {
 	docker network create Server_Network
-	#docker run -d --net=Server_Network --name Server $SERVERIMAGE
-	docker run -d --name Server $SERVERIMAGE
+	docker run -d --net=Server_Network --name Server $SERVERIMAGE
 	sleep 5
 	echo "Server initialized"   
 	echo
