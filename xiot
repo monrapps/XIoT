@@ -184,7 +184,7 @@ star_topology()
 	echo
 	echo Server
 	docker run -v xiotvolume:/xiotvolume -d --net=Server_Network --name Server $SERVERIMAGE
-	sleep 10 
+	sleep 5
 	echo
 	for i in $(seq 1 $GATEWAYROUTERS)
 	do
@@ -195,7 +195,6 @@ star_topology()
 		docker run -v xiotvolume:/xiotvolume -d --net=Gateway_Network_$i --name Gateway_Router_$i $GATEWAYROUTERIMAGE
 		echo
 		docker network connect Server_Network Gateway_Router_$i
-		#sleep 5
 		for j in $(seq 1 $GATEWAYS)
 		do      
 	   		z="$(( $GATEWAYS * ( $i - 1 ) + $j ))"	   		
@@ -214,7 +213,6 @@ star_topology()
 		docker run -v xiotvolume:/xiotvolume -d --net=Client_Network_$i --name Client_Router_$i $CLIENTROUTERIMAGE
 		echo
 		docker network connect Server_Network Client_Router_$i
-		#sleep 5
 		for j in $(seq 1 $CLIENTS)
 		do
 			z="$(( $CLIENTS * ( $i - 1 ) + $j ))"

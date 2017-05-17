@@ -3,8 +3,6 @@
 cd xia-core/bin
 ./xianet -r -n start
 
-sleep 5
-
 cp /xia-core/etc/resolv.conf /xiotvolume/resolv.conf
 
 tail -f /var/log/dmesg
