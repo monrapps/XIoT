@@ -14,7 +14,7 @@ Start or stop the XIoT network testing services.
 
 usage: $NAME [-cgCGmdtr] [-c <clients_per_router>] [-g <gateways_per_router>] [-m <motes_per_gateway>]
              [-C <client_routers>] [-G <gateway_routers>] [-r <resquests>]
-             [-t <timeout>] [-d <data_size>]  [start|stop|restart|kill]
+             [-t <timeout>] [-d <data_size>]  [start|stop|kill|prune|single|build|print|manual]
 where:
   -c Clients per Clients Routers
   -g Gateways per Gateways Routers
@@ -25,10 +25,14 @@ where:
   -r Requests
   -t Timeout (ms)
   
-  start   - starts the network processes if not already running
-  stop    - stops the processes
-  restart - stops then starts the processes
-  kill    - kill all services including orphaned services
+  start   - starts the networks and containers
+  stop    - stops all containers
+  manual  - start manual mode 
+  kill    - kills all containers
+  prune   - prune networks and volumes
+  build   - build images
+  print   - prints configuration
+  single  - start in a single network (no routers)
 
 EOF
 	exit 0
@@ -184,7 +188,7 @@ star_topology()
 	echo
 	echo Server
 	docker run -v xiotvolume:/xiotvolume -d --net=Server_Network --name Server $SERVERIMAGE
-	sleep 5
+	sleep 10
 	echo
 	for i in $(seq 1 $GATEWAYROUTERS)
 	do
@@ -194,6 +198,7 @@ star_topology()
 		echo "Gateway Router $i"   		
 		docker run -v xiotvolume:/xiotvolume -d --net=Gateway_Network_$i --name Gateway_Router_$i $GATEWAYROUTERIMAGE
 		echo
+		#sleep 5
 		docker network connect Server_Network Gateway_Router_$i
 		for j in $(seq 1 $GATEWAYS)
 		do      
@@ -212,6 +217,7 @@ star_topology()
 		echo "Clients Router $i"	
 		docker run -v xiotvolume:/xiotvolume -d --net=Client_Network_$i --name Client_Router_$i $CLIENTROUTERIMAGE
 		echo
+		#sleep 5
 		docker network connect Server_Network Client_Router_$i
 		for j in $(seq 1 $CLIENTS)
 		do
@@ -223,22 +229,26 @@ star_topology()
 	done
 }
 
-timeex()
+single_network()
 {
+	echo Starting Server
 	docker run -d xia-server
-
 	sleep 5
 
 	for i in `seq 1 $GATEWAYS`;
 	do
-	    docker run -d $GATEWAYIMAGE &
+		echo
+		echo Starting Gateway
+		docker run -d $GATEWAYIMAGE &
 	done
 
 	sleep 5
 
 	for i in `seq 1 $CLIENTS`;
 	do
- 	   docker run $CLIENTIMAGE &
+		echo
+		echo Starting Client 	
+		docker run $CLIENTIMAGE &
 	done
 }
 
@@ -268,9 +278,9 @@ case $1 in
 	manual)		
 		manual_network
 		;;
-	time)
+	single)
 		print_config
-		timeex
+		single_network
 		;;
 	print)
 		print_config
