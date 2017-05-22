@@ -1,6 +1,6 @@
 #!/bin/sh
 
-sleep 10
+sleep 15
 
 cd xia-core/bin
 ./xianet -t start
