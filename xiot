@@ -219,7 +219,7 @@ star_topology()
 		do
 			z="$(( $CLIENTS * ( $i - 1 ) + $j ))"
 			echo "Client $z"
-			docker run -v xiotvolume:/xiotvolume --net=Client_Network_$i --name Client_$z $CLIENTIMAGE    
+			docker run -v xiotvolume:/xiotvolume --net=Client_Network_$i --name Client_$z $CLIENTIMAGE &
 			echo
 		done
 	done
