@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#Tunslip utility
+
+#build tunslip6
+cd contiki/tools
+make tunslip6
+
+
+
+#Make a connection between the RPL network and your local machine. 
+cd contiki/tools
+sudo ./tunslip6 -a 127.0.0.1 aaaa::1/64
+
+
+#compile on terminal example
+cd /contiki-2.7/examples/ipv6/rpl-udp 
+make TARGET=sky 
