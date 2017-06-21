@@ -1,16 +1,17 @@
 #!/bin/sh
 
-sleep 20
+#sleep 20
 
-cd xia-core/bin
-./xianet -t start
+#cd xia-core/bin
+#./xianet -t start
 
-java -mx512m -jar contiki/tools/cooja/dist/cooja.jar -nogui="ipv6-rpl-udp.csc" -contiki="contiki" &
+java -mx512m -jar /contiki/tools/cooja/dist/cooja.jar -nogui="/ipv6-rpl-udp.csc" -contiki="/contiki" &
 
-sleep 20
-/contiki/tools/tunslip6 -a 127.0.0.1 aaaa::1/64
+#precisa --privileged pra rodar tunslip6
+sleep 5
+/contiki/tools/tunslip6 -a 127.0.0.1 aaaa::1/64 
 
-ping6 aaaa::212:7401:1:101
+#ping6 aaaa::212:7401:1:101
 
 #cd ../applications/example
 #./time_of_day_server

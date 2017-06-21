@@ -1,0 +1,17 @@
+#!/bin/sh
+
+cd contiki 
+git submodule update --init 
+
+cd tools
+make tunslip6
+
+cd cooja
+ant run
+
+cd /contiki/examples/ipv6/rpl-border-router 
+make TARGET=sky
+
+cd /contiki/examples/ipv6/rpl-udp 
+make TARGET=sky
+
