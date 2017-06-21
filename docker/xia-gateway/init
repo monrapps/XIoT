@@ -5,8 +5,13 @@ sleep 20
 cd xia-core/bin
 ./xianet -t start
 
-sleep 10
+java -mx512m -jar contiki/tools/cooja/dist/cooja.jar -nogui="ipv6-rpl-udp.csc" -contiki="contiki" &
 
-cd ../applications/example
-./time_of_day_server
+sleep 20
+/contiki/tools/tunslip6 -a 127.0.0.1 aaaa::1/64
+
+ping6 aaaa::212:7401:1:101
+
+#cd ../applications/example
+#./time_of_day_server
 

@@ -1,6 +1,9 @@
 #!/bin/sh
 
-git clone https://github.com/contiki-os/contiki.git 
+git clone -b release-2-7 https://github.com/contiki-os/contiki.git 
 cd contiki 
 git submodule update --init 
+
+cd tools
+make tunslip6
 
