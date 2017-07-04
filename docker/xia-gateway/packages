@@ -1,5 +1,0 @@
-#!/bin/sh
-
-# compilar hello-world do cc25xx
-sudo apt-get -y install binutils-msp430 gcc-msp430 msp430mcu gcc-avr avr-libc msp430-libc
-
