@@ -16,25 +16,20 @@
 # limitations under the License.
 #
 
-# simple XIA echo client using stream sockets
+# simple XIA echo client using datagram sockets
 
 import sys
 import os
 
-# find the path to xia-core
-XIADIR=os.getcwd()
-while os.path.split(XIADIR)[1] != 'xia-core':
-    XIADIR=os.path.split(XIADIR)[0]
-sys.path.append(XIADIR + '/api/lib')
+sys.path.append('/home/monra/xia-core/api/lib')
 
 from c_xsocket import *
 
-STREAM_NAME = "www_s.stream_echo.aaa.xia"
+NAME = "1"
 
 try:
-	sock = Xsocket(XSOCK_STREAM)
-	dag = XgetDAGbyName(STREAM_NAME)
-	Xconnect(sock, dag)
+	sock = Xsocket(XSOCK_DGRAM)
+	dag = XgetDAGbyName(NAME)
 
 	while (1):
 		print "Please enter the message (blank line to exit):"
@@ -42,9 +37,9 @@ try:
 		text = text.strip()
 		if (len(text) == 0):
 			break
-		Xsend(sock, text, 0)
+		Xsendto(sock, text, 0, dag)
 
-		data = Xrecv(sock, 8192, 0)
+		(data, sdag) = Xrecvfrom(sock, 8192, 0)
 		print data
 
 	Xclose(sock)
