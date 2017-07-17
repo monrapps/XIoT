@@ -38,3 +38,8 @@ def check_ping():
 	
 main()
 
+
+#address = open('../../etc/address.conf').read()
+#ad =  re.findall(r'AD:[0-9A-F]+', address, re.I)
+#hid =  re.findall(r'HID:[0-9A-F]+', address, re.I)
+#dag = "RE %s %s %s" % (ad[0],hid[0],SID) 
