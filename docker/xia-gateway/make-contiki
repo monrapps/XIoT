@@ -15,3 +15,6 @@ make TARGET=sky
 cd /contiki/examples/ipv6/rpl-udp 
 make TARGET=sky
 
+cd /xia-core/applications/example
+make 
+
