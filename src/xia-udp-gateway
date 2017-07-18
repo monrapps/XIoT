@@ -1,0 +1,63 @@
+#! /usr/bin/env python
+import os
+import re
+import sys
+
+# find the path to xia-core
+XIADIR=os.getcwd()
+while os.path.split(XIADIR)[1] != 'xia-core':
+    XIADIR=os.path.split(XIADIR)[0]
+sys.path.append(XIADIR + '/api/lib')
+
+from c_xsocket import *
+import socket
+
+def main():
+	if len(sys.argv) != 4:
+		usage()
+	else:
+		gateway()
+
+def usage():
+    sys.stdout = sys.stderr
+    print 'Usage: xia-udp-gateway name address'
+    sys.exit(2)    
+
+def gateway():	
+	UDP_IP = sys.argv[2]
+	NAME = sys.argv[1]
+	
+	UDP_PORT = 3000	
+	MAXLEN = 120	
+	TIMEOUT = 1 # seconds
+	try:
+		SID = XmakeNewSID()
+		sock = Xsocket(XSOCK_DGRAM)
+		address = open(XIADIR + '/etc/address.conf').read()	
+		ad =  re.findall(r'AD:[0-9A-F]+', address, re.I)	
+		hid =  re.findall(r'HID:[0-9A-F]+', address, re.I)	
+		dag = "RE %s %s %s" % (ad[0],hid[0],SID) 
+		XregisterName(NAME, dag)
+		Xbind(sock, dag)
+		while (1):
+			print "waiting for xdp-data"
+			(data, cdag) = Xrecvfrom(sock, MAXLEN, 0)
+			print "received xdp-message:", data
+			udpsock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM) # UDP
+   			udpsock.settimeout(TIMEOUT)
+    			udpsock.sendto(data, (UDP_IP, UDP_PORT))
+    			try:			
+        			data, addr = udpsock.recvfrom(120)
+        			print "received udp-message:", data   			
+				print "received %d bytes from udp-client" % (len(data))       					
+			except socket.timeout:	
+				data = "udp-timeout"
+				print "udp-timeout"
+			Xsendto(sock, data, 0, cdag)
+		Xclose(sock)
+		XremoveSID(SID)	
+	except:
+		print "Xsocket error"
+        
+main()
+
