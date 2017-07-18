@@ -233,13 +233,13 @@ single_network()
 	for i in `seq 1 $GATEWAYS`;
 	do
 		echo Starting Gateway
-		docker run -d $GATEWAYIMAGE
+		docker run -itd --privileged $GATEWAYIMAGE
 		echo
 	done
 	for i in `seq 1 $CLIENTS`;
 	do
 		echo Starting Client 	
-		docker run $CLIENTIMAGE
+		docker run -it $CLIENTIMAGE
 		echo
 	done
 }

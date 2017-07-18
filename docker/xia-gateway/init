@@ -12,5 +12,6 @@ sleep 5
 /contiki/tools/tunslip6 -a 127.0.0.1 aaaa::1/64 
 
 cd ../applications/example
+./getdag
 ./xia-udp-gateway 1 aaaa::212:7402:2:202
 

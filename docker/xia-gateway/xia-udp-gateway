@@ -14,7 +14,7 @@ from c_xsocket import *
 import socket
 
 def main():
-	if len(sys.argv) != 4:
+	if len(sys.argv) != 3:
 		usage()
 	else:
 		gateway()
@@ -34,7 +34,7 @@ def gateway():
 	try:
 		SID = XmakeNewSID()
 		sock = Xsocket(XSOCK_DGRAM)
-		address = open(XIADIR + '/etc/address.conf').read()	
+		address = open('./dag').read()	
 		ad =  re.findall(r'AD:[0-9A-F]+', address, re.I)	
 		hid =  re.findall(r'HID:[0-9A-F]+', address, re.I)	
 		dag = "RE %s %s %s" % (ad[0],hid[0],SID) 
