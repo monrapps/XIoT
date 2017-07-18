@@ -2,6 +2,7 @@
 import os
 import re
 import sys
+import time
 
 # find the path to xia-core
 XIADIR=os.getcwd()
@@ -41,15 +42,18 @@ def gateway():
 		Xbind(sock, dag)
 		while (1):
 			print "waiting for xdp-data"
-			(data, cdag) = Xrecvfrom(sock, MAXLEN, 0)
-			print "received xdp-message:", data
+			(data, cdag) = Xrecvfrom(sock, MAXLEN, 0)			 			
+			print "received", len(data), "bytes from", cdag,":", data   
 			udpsock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM) # UDP
    			udpsock.settimeout(TIMEOUT)
     			udpsock.sendto(data, (UDP_IP, UDP_PORT))
+    			print "waiting for udp-data"
+    			latency = time.time() * 1000
     			try:			
-        			data, addr = udpsock.recvfrom(120)
-        			print "received udp-message:", data   			
-				print "received %d bytes from udp-client" % (len(data))       					
+        			data, addr = udpsock.recvfrom(120)	
+        			latency = (time.time() * 1000) - latency	
+				print "received", len(data), "bytes from", addr, ":", data     
+				print "latency: %d ms" % latency					
 			except socket.timeout:	
 				data = "udp-timeout"
 				print "udp-timeout"

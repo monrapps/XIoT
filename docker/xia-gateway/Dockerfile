@@ -10,6 +10,8 @@ RUN git clone -b release-2-7 https://github.com/contiki-os/contiki.git
 
 COPY . ./
 
+COPY xia-udp-gateway /xia-core/applications/examples/xia-udp-gateway
+
 RUN /make-contiki
 
 #ENTRYPOINT ["./init"]

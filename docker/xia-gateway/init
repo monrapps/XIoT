@@ -11,7 +11,7 @@ java -mx512m -jar /contiki/tools/cooja/dist/cooja.jar -nogui="/ipv6-rpl-udp.csc"
 sleep 5
 /contiki/tools/tunslip6 -a 127.0.0.1 aaaa::1/64 
 
-#ping6 aaaa::212:7401:1:101
+ping6 aaaa::212:7401:1:101
 
 #cd ../applications/example
 #./time_of_day_server
