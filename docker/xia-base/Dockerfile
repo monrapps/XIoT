@@ -25,7 +25,7 @@ RUN apt-get install -y net-tools
 #RUN pip install --upgrade pip
 #RUN pip install pynacl
 
-COPY . ./
+COPY init ./init
 
 RUN /install-xia
 

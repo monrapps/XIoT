@@ -1,8 +1,8 @@
 FROM xia-base
 
-COPY . ./
+COPY init ./init
 
-COPY echotester /xia-core/applications/examples/echotester
+COPY echotester ./xia-core/applications/examples/echotester
 
 ENTRYPOINT ["./init"]
 

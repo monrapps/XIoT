@@ -8,5 +8,5 @@ cd xia-core/bin
 sleep 10
 
 cd ../applications/example
-./time_of_day_client
+./echotester 1
 

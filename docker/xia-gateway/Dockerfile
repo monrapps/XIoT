@@ -8,11 +8,15 @@ RUN apt-get -y install binutils-msp430 gcc-msp430 msp430mcu gcc-avr avr-libc msp
 
 RUN git clone -b release-2-7 https://github.com/contiki-os/contiki.git 
 
-COPY . ./
+COPY init ./init
 
-COPY xia-udp-gateway /xia-core/applications/examples/xia-udp-gateway
+COPY ipv6-rpl-udp.csc ./ipv6-rpl-udp.csc
 
-RUN /make-contiki
+COPY make-contiki ./make-contiki
 
-#ENTRYPOINT ["./init"]
+COPY xia-udp-gateway ./xia-core/applications/examples/xia-udp-gateway
+
+RUN ./make-contiki
+
+ENTRYPOINT ["./init"]
 

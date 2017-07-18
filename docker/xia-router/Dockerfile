@@ -1,6 +1,6 @@
 FROM xia-base
 
-COPY . ./
+COPY init ./init
 
 ENTRYPOINT ["./init"]
 
