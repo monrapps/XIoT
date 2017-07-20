@@ -1,5 +1,7 @@
 #!/bin/sh
 
+service rsyslog start
+
 sleep 20
 
 cd xia-core/bin
@@ -8,8 +10,8 @@ cd xia-core/bin
 java -mx512m -jar /contiki/tools/cooja/dist/cooja.jar -nogui="/ipv6-rpl-udp.csc" -contiki="/contiki" &
 
 #precisa --privileged pra rodar tunslip6
-sleep 5
-/contiki/tools/tunslip6 -a 127.0.0.1 aaaa::1/64 
+sleep 10
+/contiki/tools/tunslip6 -a 127.0.0.1 aaaa::1/64 &
 
 cd ../applications/example
 ./getdag

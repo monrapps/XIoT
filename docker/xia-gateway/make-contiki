@@ -12,7 +12,7 @@ ant run
 cd /contiki/examples/ipv6/rpl-border-router 
 make TARGET=sky
 
-cd /contiki/examples/ipv6/rpl-udp 
+cd /contiki/examples/cc2538dk/udp-ipv6-echo-server
 make TARGET=sky
 
 cd /xia-core/applications/example

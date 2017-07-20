@@ -22,5 +22,5 @@ COPY xia-udp-gateway ./xia-core/applications/example/xia-udp-gateway
 
 COPY init ./init
 
-#ENTRYPOINT ["./init"]
+ENTRYPOINT ["./init"]
 
