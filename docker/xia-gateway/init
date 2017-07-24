@@ -2,18 +2,23 @@
 
 service rsyslog start
 
-sleep 20
+#sleep 20
 
 cd xia-core/bin
-./xianet -t start
+./xianet -r -n start ### AQUI é -t
 
-java -mx512m -jar /contiki/tools/cooja/dist/cooja.jar -nogui="/ipv6-rpl-udp.csc" -contiki="/contiki" &
+java -mx512m -jar /contiki/tools/cooja/dist/cooja.jar -nogui="/ipv6-rpl-udp.csc" -contiki="/contiki" > /dev/null &
 
 #precisa --privileged pra rodar tunslip6
-sleep 10
+sleep 5
 /contiki/tools/tunslip6 -a 127.0.0.1 aaaa::1/64 &
 
-cd ../applications/example
+sleep 30
+cd /
+wget http://[aaaa::212:7401:1:101]/
+cat index.html | grep -c aaaa
+
+cd /xia-core/applications/example
 ./getdag
 ./xia-udp-gateway 1 aaaa::212:7402:2:202
 

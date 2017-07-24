@@ -66,8 +66,8 @@
       <breakpoints />
       <interface_config>
         se.sics.cooja.interfaces.Position
-        <x>53.268023368451786</x>
-        <y>6.6299503967713225</y>
+        <x>0.0</x>
+        <y>-1</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -80,8 +80,8 @@
       <breakpoints />
       <interface_config>
         se.sics.cooja.interfaces.Position
-        <x>67.04721315109214</x>
-        <y>28.413458238434742</y>
+        <x>0.0</x>
+        <y>0.0</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -90,53 +90,11 @@
       </interface_config>
       <motetype_identifier>sky2</motetype_identifier>
     </mote>
-    <mote>
-      <breakpoints />
-      <interface_config>
-        se.sics.cooja.interfaces.Position
-        <x>0.5851544601917058</x>
-        <y>88.69851057071143</y>
-        <z>0.0</z>
-      </interface_config>
-      <interface_config>
-        se.sics.cooja.mspmote.interfaces.MspMoteID
-        <id>3</id>
-      </interface_config>
-      <motetype_identifier>sky2</motetype_identifier>
-    </mote>
-    <mote>
-      <breakpoints />
-      <interface_config>
-        se.sics.cooja.interfaces.Position
-        <x>7.9027343114117965</x>
-        <y>0.41399125928770486</y>
-        <z>0.0</z>
-      </interface_config>
-      <interface_config>
-        se.sics.cooja.mspmote.interfaces.MspMoteID
-        <id>4</id>
-      </interface_config>
-      <motetype_identifier>sky2</motetype_identifier>
-    </mote>
-    <mote>
-      <breakpoints />
-      <interface_config>
-        se.sics.cooja.interfaces.Position
-        <x>12.302317464722135</x>
-        <y>59.59507840401601</y>
-        <z>0.0</z>
-      </interface_config>
-      <interface_config>
-        se.sics.cooja.mspmote.interfaces.MspMoteID
-        <id>5</id>
-      </interface_config>
-      <motetype_identifier>sky2</motetype_identifier>
-    </mote>
-  </simulation>
+    </simulation>
   <plugin>
     se.sics.cooja.plugins.SimControl
     <width>280</width>
-    <z>1</z>
+    <z>9</z>
     <height>160</height>
     <location_x>400</location_x>
     <location_y>0</location_y>
@@ -154,7 +112,59 @@
       <viewport>3.5628608163555278 0.0 0.0 3.5628608163555278 73.51764376020206 14.25227949124292</viewport>
     </plugin_config>
     <width>400</width>
-    <z>3</z>
+    <z>8</z>
+    <height>400</height>
+    <location_x>1</location_x>
+    <location_y>1</location_y>
+  </plugin>
+  <plugin>
+    se.sics.cooja.plugins.LogListener
+    <plugin_config>
+      <filter />
+      <formatted_time />
+      <coloring />
+    </plugin_config>
+    <width>615</width>
+    <z>7</z>
+    <height>240</height>
+    <location_x>400</location_x>
+    <location_y>160</location_y>
+  </plugin>
+  <plugin>
+    se.sics.cooja.plugins.TimeLine
+    <plugin_config>
+      <mote>0</mote>
+      <mote>1</mote>
+      <zoomfactor>500.0</zoomfactor>
+    </plugin_config>
+    <width>1015</width>
+    <z>10</z>
+    <height>166</height>
+    <location_x>0</location_x>
+    <location_y>811</location_y>
+  </plugin>
+  <plugin>
+    se.sics.cooja.plugins.SimControl
+    <width>280</width>
+    <z>2</z>
+    <height>160</height>
+    <location_x>400</location_x>
+    <location_y>0</location_y>
+  </plugin>
+  <plugin>
+    se.sics.cooja.plugins.Visualizer
+    <plugin_config>
+      <moterelations>true</moterelations>
+      <skin>se.sics.cooja.plugins.skins.IDVisualizerSkin</skin>
+      <skin>se.sics.cooja.plugins.skins.GridVisualizerSkin</skin>
+      <skin>se.sics.cooja.plugins.skins.TrafficVisualizerSkin</skin>
+      <skin>se.sics.cooja.plugins.skins.UDGMVisualizerSkin</skin>
+      <skin>se.sics.cooja.plugins.skins.AddressVisualizerSkin</skin>
+      <skin>se.sics.cooja.plugins.skins.MoteTypeVisualizerSkin</skin>
+      <viewport>45.744227887365014 0.0 0.0 45.744227887365014 180.6740588137259 158.7635060917559</viewport>
+    </plugin_config>
+    <width>400</width>
+    <z>0</z>
     <height>400</height>
     <location_x>1</location_x>
     <location_y>1</location_y>
@@ -177,9 +187,6 @@
     <plugin_config>
       <mote>0</mote>
       <mote>1</mote>
-      <mote>2</mote>
-      <mote>3</mote>
-      <mote>4</mote>
       <showRadioRXTX />
       <showRadioHW />
       <showLEDs />
@@ -207,7 +214,7 @@
     SerialSocketServer
     <mote_arg>0</mote_arg>
     <width>422</width>
-    <z>2</z>
+    <z>3</z>
     <height>96</height>
     <location_x>590</location_x>
     <location_y>88</location_y>
@@ -215,15 +222,7 @@
   <plugin>
     se.sics.cooja.plugins.ScriptRunner
     <plugin_config>
-      <script>/*&#xD;
- * Example Contiki test script (JavaScript).&#xD;
- * A Contiki test script acts on mote output, such as via printf()'s.&#xD;
- * The script may operate on the following variables:&#xD;
- *  Mote mote, int id, String msg&#xD;
- */&#xD;
-&#xD;
-//TIMEOUT(60000);&#xD;
-sim.setSpeedLimit(1.0);&#xD;
+      <script>sim.setSpeedLimit(1.0);&#xD;
 while (true) {&#xD;
   log.log(time + ":" + id + ":" + msg + "\n");&#xD;
   YIELD();&#xD;
@@ -231,7 +230,7 @@ while (true) {&#xD;
       <active>false</active>
     </plugin_config>
     <width>1014</width>
-    <z>0</z>
+    <z>1</z>
     <height>409</height>
     <location_x>1</location_x>
     <location_y>402</location_y>

@@ -62,6 +62,6 @@ def gateway():
 		XremoveSID(SID)	
 	except:
 		print "Xsocket error"
-        
+		        
 main()
 

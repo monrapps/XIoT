@@ -1,6 +1,6 @@
 #!/bin/sh
 
-apt-get -y install autogen autoconf libtool libtool-bin bison byacc flex libpcap-dev libgtk-3-dev
+sudo apt-get -y install autogen autoconf libtool libtool-bin bison byacc flex libpcap-dev libgtk-3-dev
 
 cd ~
 
@@ -20,5 +20,5 @@ cd wireshark
 ./autogen.sh
 ./configure --with-dumpcap-group=wireshark --enable-setcap-install --with-libcap
 make
-make install
+sudo make install
 

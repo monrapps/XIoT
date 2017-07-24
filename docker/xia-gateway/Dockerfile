@@ -6,6 +6,8 @@ RUN apt-get -y install ant openjdk-8-jdk
 
 RUN apt-get -y install binutils-msp430 gcc-msp430 msp430mcu gcc-avr avr-libc msp430-libc
 
+RUN apt-get -y install wget
+
 RUN git clone -b release-2-7 https://github.com/contiki-os/contiki.git 
 
 COPY getdag.c ./xia-core/applications/example/getdag.c

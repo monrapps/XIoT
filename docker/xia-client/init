@@ -2,12 +2,12 @@
 
 service rsyslog start
 
-sleep 30
+#sleep 30
 
 cd xia-core/bin
 ./xianet -t start
 
-sleep 10
+sleep 20
 
 cd ../applications/example
 ./echotester 1
