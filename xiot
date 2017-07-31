@@ -202,7 +202,7 @@ star_topology()
 		do      
 	   		z="$(( $GATEWAYS * ( $i - 1 ) + $j ))"	   		
 	   		echo "Gateway $z"
-	   		docker run -v xiotvolume:/xiotvolume -d --net=Gateway_Network_$i --name Gateway_$i $GATEWAYIMAGE
+	   		docker run -v xiotvolume:/xiotvolume -d --privileged --net=Gateway_Network_$i --name Gateway_$z $GATEWAYIMAGE
 	   		echo
 	   	done
 	done
@@ -219,7 +219,7 @@ star_topology()
 		do
 			z="$(( $CLIENTS * ( $i - 1 ) + $j ))"
 			echo "Client $z"
-			docker run -v xiotvolume:/xiotvolume --net=Client_Network_$i --name Client_$z $CLIENTIMAGE &
+			docker run -it -v xiotvolume:/xiotvolume --net=Client_Network_$i --name Client_$z $CLIENTIMAGE 
 			echo
 		done
 	done
@@ -246,18 +246,29 @@ single_network()
 
 manual_network()
 {
+	docker volume create xiotvolume
+	
 	docker network create servernet
-	docker network create clientnet
+	
+	docker network create gatewayrouternet	
 	docker network create gatewaynet
+		
+	docker network create clientrouternet
+	docker network create clientnet	
 	
-	docker run -itd --net=servernet --name server xia-base
-	docker run -itd --net=gatewaynet --name gateway xia-base
-	docker run -itd --net=gatewaynet --name gatewayrouter xia-base
-	docker run -itd --net=clientnet --name client xia-base
-	docker run -itd --net=clientnet --name clientrouter xia-base
+	docker run -d --net=servernet -v xiotvolume:/xiotvolume --name server xia-server
+	docker network connect gatewayrouternet server
+	docker network connect clientrouternet server	
 	
-	docker network connect servernet gatewayrouter
-	docker network connect servernet clientrouter
+	docker run -d --net=gatewayrouternet -v xiotvolume:/xiotvolume --name gatewayrouter xia-router
+	docker network connect gatewaynet gatewayrouter
+	
+	docker run -d --net=gatewaynet -v xiotvolume:/xiotvolume --privileged --name gateway xia-gateway	
+	
+	docker run -d --net=clientrouternet -v xiotvolume:/xiotvolume --name clientrouter xia-router
+	docker network connect clientnet clientrouter
+	
+	docker run -it --net=clientnet -v xiotvolume:/xiotvolume --name client xia-client
 }
 
 #

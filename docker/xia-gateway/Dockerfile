@@ -14,9 +14,9 @@ COPY getdag.c ./xia-core/applications/example/getdag.c
 
 COPY Makefile ./xia-core/applications/example/Makefile
 
-COPY make-contiki ./make-contiki
+COPY make-gateway ./make-gateway
 
-RUN ./make-contiki
+RUN ./make-gateway
 
 COPY ipv6-rpl-udp.csc ./ipv6-rpl-udp.csc
 
