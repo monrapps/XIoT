@@ -15,19 +15,38 @@ sys.path.append(XIADIR + '/api/lib')
 from c_xsocket import *
 
 MAXLEN = 120
-NAME = sys.argv[1]
+HOSTNAME = sys.argv[1]
+REQUESTS = 100
 
-while True:
-		sock = Xsocket(XSOCK_DGRAM)
-		dag = XgetDAGbyName(NAME)
-		while (1):
-			text = ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for _ in range(random.randint(1,100)))
-			latency = time.time() * 1000
-			Xsendto(sock, text, 0, dag)
-			print "sent" , len(text), "bytes to", dag,":", text
-			(data, sdag) = Xrecvfrom(sock, MAXLEN, 0)
-			latency = (time.time() * 1000) - latency
-			print "received", len(data), "bytes from", sdag,":", data   			
-			print "latency: %d ms" % latency	
-		Xclose(sock)
+REQ = 0
+
+while REQ < REQUESTS:
+	sock = Xsocket(XSOCK_DGRAM)
+	dag = XgetDAGbyName(HOSTNAME)
+	DATASIZE = random.randint(1,100)
+	
+	text = ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for _ in range(DATASIZE))
+	latency = time.time() * 1000
+	Xsendto(sock, text, 0, dag)
+	REQ = REQ + 1
+	
+	print REQ, " : sending" , len(text), "bytes to", dag,":", text
+	
+	(data, sdag) = Xrecvfrom(sock, MAXLEN, 0)	
+	latency = (time.time() * 1000) - latency
+	Xclose(sock)
+	
+	print "received", len(data), "bytes from", sdag,":", data   			
+	print "latency: %d ms" % latency
+	
+	if data == text:
+		print "success"
+	elif data == "udp-timeout":
+		print "udp error"
+	else:
+		print "data error"
 		
+# TODO: RANDOM NAMEs
+# TODO: CSV
+# TODO: sys.arqv[]
+
