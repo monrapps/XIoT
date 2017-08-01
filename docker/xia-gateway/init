@@ -19,6 +19,6 @@ sleep 5
 #cat index.html | grep -c aaaa
 
 cd /xia-core/applications/example
-./getdag
-./xia-udp-gateway 1 aaaa::212:7402:2:202
+./getlocaldag
+./xia-udp-gateway 1.1.1 aaaa::212:7402:2:202
 

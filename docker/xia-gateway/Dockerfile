@@ -10,7 +10,7 @@ RUN apt-get -y install wget
 
 RUN git clone -b release-2-7 https://github.com/contiki-os/contiki.git 
 
-COPY getdag.c ./xia-core/applications/example/getdag.c
+COPY getlocaldag.c ./xia-core/applications/example/getlocaldag.c
 
 COPY Makefile ./xia-core/applications/example/Makefile
 

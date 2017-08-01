@@ -21,13 +21,12 @@ where:
   -m Motes per Gateway
   -C Client Routers
   -G Gateway Routers
-  -d Data size (bytes)
-  -r Requests
-  -t Timeout (ms)
+  -d Data size (bytes) # Datagram Payload Size
+  -r Requests # Number of requests of each client
+  -t Timeout (s) # Gateway to UDP network. There is no timeout on XIA network
   
   start   - starts the networks and containers
   stop    - stops all containers
-  manual  - start manual mode 
   kill    - kills all containers
   prune   - prune networks and volumes
   build   - build images
@@ -44,10 +43,10 @@ setup()
 	CLIENTROUTERS=1
 	GATEWAYS=1
 	GATEWAYROUTERS=1
-	MOTES=2
-	TIMEOUT=1000
+	MOTES=1
+	TIMEOUT=1
 	DATASIZE=8
-	REQUESTS=1
+	REQUESTS=10
 	
 	FIA=xia
 	
@@ -191,35 +190,43 @@ star_topology()
 	echo
 	for i in $(seq 1 $GATEWAYROUTERS)
 	do
-		echo Gateway_Network_$i
-		docker network create Gateway_Network_$i
+		echo Gateway_Router_Network_$i
+		docker network create Gateway_Router_Network_$i			
+		docker network connect Gateway_Router_Network_$i Server
 		echo
 		echo "Gateway Router $i"   		
-		docker run -v xiotvolume:/xiotvolume -d --net=Gateway_Network_$i --name Gateway_Router_$i $GATEWAYROUTERIMAGE		
-		docker network connect Server_Network Gateway_Router_$i
+		docker run -v xiotvolume:/xiotvolume -d --net=Gateway_Router_Network_$i --name Gateway_Router_$i $GATEWAYROUTERIMAGE	
 		echo
 		for j in $(seq 1 $GATEWAYS)
 		do      
-	   		z="$(( $GATEWAYS * ( $i - 1 ) + $j ))"	   		
-	   		echo "Gateway $z"
-	   		docker run -v xiotvolume:/xiotvolume -d --privileged --net=Gateway_Network_$i --name Gateway_$z $GATEWAYIMAGE
+	   		z="$(( $GATEWAYS * ( $i - 1 ) + $j ))"
+	   		echo Gateway_Network_$z
+			docker network create Gateway_Network_$z
+			docker network connect Gateway_Network_$z Gateway_Router_$i
+			echo		
+	   		echo "Gateway $z"					
+	   		docker run -v xiotvolume:/xiotvolume -d --privileged --net=Gateway_Network_$z --name Gateway_$z $GATEWAYIMAGE
 	   		echo
 	   	done
 	done
 	for i in $(seq 1 $CLIENTROUTERS)
 	do
-		echo Client_Network_$i
-		docker network create Client_Network_$i	
+		echo Client_Router_Network_$i
+		docker network create Client_Router_Network_$i		
+		docker network connect Client_Router_Network_$i Server
 		echo		
-		echo "Clients Router $i"	
-		docker run -v xiotvolume:/xiotvolume -d --net=Client_Network_$i --name Client_Router_$i $CLIENTROUTERIMAGE		
-		docker network connect Server_Network Client_Router_$i
+		echo "Client Router $i"	
+		docker run -v xiotvolume:/xiotvolume -d --net=Client_Router_Network_$i --name Client_Router_$i $CLIENTROUTERIMAGE	
 		echo
 		for j in $(seq 1 $CLIENTS)
 		do
-			z="$(( $CLIENTS * ( $i - 1 ) + $j ))"
+			z="$(( $CLIENTS * ( $i - 1 ) + $j ))"	
+			echo Client_Network_$z		
+			docker network create Client_Network_$z	
+			docker network connect Client_Network_$z Client_Router_$i
+			echo	
 			echo "Client $z"
-			docker run -it -v xiotvolume:/xiotvolume --net=Client_Network_$i --name Client_$z $CLIENTIMAGE 
+			docker run -it -v xiotvolume:/xiotvolume --net=Client_Network_$z -e MOTES=$MOTES -e GATEWAYS=$GATEWAYS -e GATEWAYROUTERS=$GATEWAYROUTERS -e DATASIZE=$DATASIZE -e REQUESTS=$REQUESTS --name Client_$z $CLIENTIMAGE 
 			echo
 		done
 	done
@@ -263,12 +270,12 @@ manual_network()
 	docker run -d --net=gatewayrouternet -v xiotvolume:/xiotvolume --name gatewayrouter xia-router
 	docker network connect gatewaynet gatewayrouter
 	
-	docker run -d --net=gatewaynet -v xiotvolume:/xiotvolume --privileged --name gateway xia-gateway	
+	docker run -itd --net=gatewaynet -v xiotvolume:/xiotvolume --privileged --name gateway xia-gateway	
 	
 	docker run -d --net=clientrouternet -v xiotvolume:/xiotvolume --name clientrouter xia-router
 	docker network connect clientnet clientrouter
 	
-	docker run -it --net=clientnet -v xiotvolume:/xiotvolume --name client xia-client
+	docker run -it --net=clientnet -v xiotvolume:/xiotvolume -e MOTES=1 -e GATEWAYS=1 -e GATEWAYROUTERS=1 -e DATASIZE=8 -e REQUESTS=10 --name client xia-client
 }
 
 #

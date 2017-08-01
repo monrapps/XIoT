@@ -10,5 +10,5 @@ cd xia-core/bin
 sleep 10
 
 cd ../applications/example
-./echotester 1
+./echotester $MOTES $GATEWAYS $GATEWAYROUTERS $DATASIZE $REQUESTS
 
