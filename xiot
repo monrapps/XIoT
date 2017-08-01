@@ -179,85 +179,55 @@ build_all()
 
 star_topology()
 {
-	echo Data Volume
+	echo "Data Volume"
 	docker volume create xiotvolume
 	echo
 	
-	echo Server Network
+	echo "Server Network"
 	docker network create Server_Network	
 	echo		
 	for i in $(seq 1 $GATEWAYROUTERS)
 	do
-		echo Gateway_Router_Network_$i
-		docker network create Gateway_Router_Network_$i		
+		echo "Gateways_Network_$i"
+		docker network create Gateways_Network_$i		
 		echo
-		for j in $(seq 1 $GATEWAYS)
-		do      
-	   		z="$(( $GATEWAYS * ( $i - 1 ) + $j ))"
-	   		echo Gateway_Network_$z
-			docker network create Gateway_Network_$z
-			echo
-	   	done
 	done	
 	for i in $(seq 1 $CLIENTROUTERS)
 	do
-		echo Client_Router_Network_$i
-		docker network create Client_Router_Network_$i		
-		echo		
-		for j in $(seq 1 $CLIENTS)
-		do
-			z="$(( $CLIENTS * ( $i - 1 ) + $j ))"	
-			echo Client_Network_$z		
-			docker network create Client_Network_$z	
-			echo	
-		done
+		echo "Clients_Network_$i"
+		docker network create Clients_Network_$i		
+		echo
 	done
 	
-	echo Server
+	echo "Server"
 	docker run -v xiotvolume:/xiotvolume -d --net=Server_Network --name Server $SERVERIMAGE	
 	echo
-	for i in $(seq 1 $GATEWAYROUTERS)
-	do			
-		docker network connect Gateway_Router_Network_$i Server
-	done
-	for i in $(seq 1 $CLIENTROUTERS)
-	do	
-		docker network connect Client_Router_Network_$i Server
-	done
 		
 	for i in $(seq 1 $GATEWAYROUTERS)
 	do
 		echo "Gateway Router $i"   		
-		docker run -v xiotvolume:/xiotvolume -d --net=Gateway_Router_Network_$i --name Gateway_Router_$i $GATEWAYROUTERIMAGE	
-		echo
-		for j in $(seq 1 $GATEWAYS)
-		do      
-	   		z="$(( $GATEWAYS * ( $i - 1 ) + $j ))"
-			docker network connect Gateway_Network_$z Gateway_Router_$i
-	   	done		
+		docker run -v xiotvolume:/xiotvolume -d --net=Gateways_Network_$i --name Gateway_Router_$i $GATEWAYROUTERIMAGE	
+		docker network connect Server_Network Gateway_Router_$i
+		echo		
 		for j in $(seq 1 $GATEWAYS)
 		do      
 	   		z="$(( $GATEWAYS * ( $i - 1 ) + $j ))"		
 	   		echo "Gateway $z"					
-	   		docker run -v xiotvolume:/xiotvolume -d -e GATEWAYROUTER=$i -e GATEWAY=$z --privileged --net=Gateway_Network_$z --name Gateway_$z $GATEWAYIMAGE
+	   		docker run -v xiotvolume:/xiotvolume -d -e GATEWAYROUTER=$i -e GATEWAY=$z --privileged --net=Gateways_Network_$i --name Gateway_$z $GATEWAYIMAGE
 	   		echo
 	   	done
 	done
 	for i in $(seq 1 $CLIENTROUTERS)
 	do
 		echo "Client Router $i"	
-		docker run -v xiotvolume:/xiotvolume -d --net=Client_Router_Network_$i --name Client_Router_$i $CLIENTROUTERIMAGE	
+		docker run -v xiotvolume:/xiotvolume -d --net=Clients_Network_$i --name Client_Router_$i $CLIENTROUTERIMAGE		
+			docker network connect Server_Network Client_Router_$i	
 		echo
-		for j in $(seq 1 $CLIENTS)
-		do
-			z="$(( $CLIENTS * ( $i - 1 ) + $j ))"	
-			docker network connect Client_Network_$z Client_Router_$i
-		done
 		for j in $(seq 1 $CLIENTS)
 		do
 			z="$(( $CLIENTS * ( $i - 1 ) + $j ))"		
 			echo "Client $z"
-			docker run -it -v xiotvolume:/xiotvolume --net=Client_Network_$z -e MOTES=$MOTES -e GATEWAYS=$GATEWAYS -e GATEWAYROUTERS=$GATEWAYROUTERS -e DATASIZE=$DATASIZE -e REQUESTS=$REQUESTS --name Client_$z $CLIENTIMAGE
+			docker run -it -v xiotvolume:/xiotvolume --net=Clients_Network_$i -e MOTES=$MOTES -e GATEWAYS=$GATEWAYS -e GATEWAYROUTERS=$GATEWAYROUTERS -e DATASIZE=$DATASIZE -e REQUESTS=$REQUESTS --name Client_$z $CLIENTIMAGE
 			echo
 		done
 	done
