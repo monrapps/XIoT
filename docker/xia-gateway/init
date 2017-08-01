@@ -20,5 +20,5 @@ sleep 5
 
 cd /xia-core/applications/example
 ./getlocaldag
-./xia-udp-gateway 1.1.1 aaaa::212:7402:2:202
+./xia-udp-gateway 1.$GATEWAY.$GATEWAYROUTER aaaa::212:7402:2:202
 

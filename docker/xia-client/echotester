@@ -64,35 +64,36 @@ def echotester():
 	
 	REQ = 0
 	while REQ < REQUESTS:
-		HOSTNAME = str(random.randint(1,MOTES))+"."+str(random.randint(1,GATEWAYS))+"."+str(random.randint(1,GATEWAYROUTERS))
-		print HOSTNAME
-		sock = Xsocket(XSOCK_DGRAM)		
-		dag = XgetDAGbyName(HOSTNAME)
-		print dag
-		
-		#DATASIZE = random.randint(1,100)
-		
-		text = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(DATASIZE))
-		latency = time.time() * 1000
-		Xsendto(sock, text, 0, dag)
-		REQ = REQ + 1
-	
-		print REQ, " : sending" , len(text), "bytes to", dag,"\n",HOSTNAME,":", text
-	
-		(data, sdag) = Xrecvfrom(sock, MAXLEN, 0)	
-		latency = (time.time() * 1000) - latency
-		Xclose(sock)
-	
-		print "received", len(data), "bytes from", sdag,":", data   			
-		print "latency: %d ms" % latency
-		
-		if data == text:
-			print "success"
-		elif data == "udp-timeout":
-			print "udp error"
-		else:
-			print "data error"
+		try:
+			HOSTNAME = str(random.randint(1,MOTES))+"."+str(random.randint(1,GATEWAYS))+"."+str(random.randint(1,GATEWAYROUTERS))
+			print HOSTNAME
+			sock = Xsocket(XSOCK_DGRAM)		
+			dag = XgetDAGbyName(HOSTNAME)
 			
+			#DATASIZE = random.randint(1,100)
+			
+			text = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(DATASIZE))
+			latency = time.time() * 1000
+			Xsendto(sock, text, 0, dag)
+			REQ = REQ + 1
+		
+			print REQ, " : sending" , len(text), "bytes to", dag,"\n",HOSTNAME,":", text
+		
+			(data, sdag) = Xrecvfrom(sock, MAXLEN, 0)	
+			latency = (time.time() * 1000) - latency
+			Xclose(sock)
+	
+			print "received", len(data), "bytes from", sdag,":", data   			
+			print "latency: %d ms" % latency
+		
+			if data == text:
+				print "success"
+			elif data == "udp-timeout":
+				print "udp error"
+			else:
+				print "data error"
+		except:
+			print "Xsocket error"
 main()
 		
 # TODO: CSV
