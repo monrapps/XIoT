@@ -58,7 +58,7 @@ setup()
 
 	local OPTARG=$2
 
-	while getopts "c:g:C:G:m:d:t:r" opt; do
+	while getopts "c:g:C:G:m:d:t:r:" opt; do
 		case $opt in			
 			c)
 				CLIENTS=$OPTARG
@@ -105,7 +105,7 @@ print_config()
 	echo Client Routers: $CLIENTROUTERS
 	echo Gateway Routers: $GATEWAYROUTERS
 	echo Motes: $MOTES
-	echo Timeout: $TIMEOUT ms
+	echo Timeout: $TIMEOUT s
 	echo Requests: $REQUESTS
 	echo Datasize: $DATASIZE bytes
 	echo
@@ -178,37 +178,30 @@ build_all()
 }
 
 star_topology()
-{
+{	
 	echo "Data Volume"
 	docker volume create xiotvolume
-	echo
+	echo	
 	
 	echo "Server Network"
 	docker network create Server_Network	
-	echo		
-	for i in $(seq 1 $GATEWAYROUTERS)
-	do
-		echo "Gateways_Network_$i"
-		docker network create Gateways_Network_$i		
-		echo
-	done	
-	for i in $(seq 1 $CLIENTROUTERS)
-	do
-		echo "Clients_Network_$i"
-		docker network create Clients_Network_$i		
-		echo
-	done
-	
+	echo
+		
 	echo "Server"
 	docker run -v xiotvolume:/xiotvolume -d --net=Server_Network --name Server $SERVERIMAGE	
 	echo
 		
 	for i in $(seq 1 $GATEWAYROUTERS)
 	do
+		echo "Gateways_Network_$i"
+		docker network create Gateways_Network_$i		
+		echo
+		
 		echo "Gateway Router $i"   		
 		docker run -v xiotvolume:/xiotvolume -d --net=Gateways_Network_$i --name Gateway_Router_$i $GATEWAYROUTERIMAGE	
 		docker network connect Server_Network Gateway_Router_$i
-		echo		
+		echo	
+			
 		for j in $(seq 1 $GATEWAYS)
 		do      
 	   		z="$(( $GATEWAYS * ( $i - 1 ) + $j ))"		
@@ -217,12 +210,18 @@ star_topology()
 	   		echo
 	   	done
 	done
+	
 	for i in $(seq 1 $CLIENTROUTERS)
 	do
+		echo "Clients_Network_$i"
+		docker network create Clients_Network_$i		
+		echo
+		
 		echo "Client Router $i"	
 		docker run -v xiotvolume:/xiotvolume -d --net=Clients_Network_$i --name Client_Router_$i $CLIENTROUTERIMAGE		
 			docker network connect Server_Network Client_Router_$i	
 		echo
+		
 		for j in $(seq 1 $CLIENTS)
 		do
 			z="$(( $CLIENTS * ( $i - 1 ) + $j ))"		
@@ -241,13 +240,13 @@ single_network()
 	for i in `seq 1 $GATEWAYS`;
 	do
 		echo Starting Gateway
-		docker run -d --privileged $GATEWAYIMAGE
+		docker run -d -v xiotvolume:/xiotvolume -e GATEWAYROUTER=1 -e GATEWAY=$i --privileged --name Gateway_$i $GATEWAYIMAGE
 		echo
 	done
 	for i in `seq 1 $CLIENTS`;
 	do
 		echo Starting Client 	
-		docker run -it $CLIENTIMAGE
+		docker run -it -v xiotvolume:/xiotvolume -e MOTES=$MOTES -e GATEWAYS=$GATEWAYS -e GATEWAYROUTERS=$GATEWAYROUTERS -e DATASIZE=$DATASIZE -e REQUESTS=$REQUESTS --name Client_$z $CLIENTIMAGE
 		echo
 	done
 }
