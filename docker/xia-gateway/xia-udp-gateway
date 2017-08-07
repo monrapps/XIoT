@@ -14,14 +14,14 @@ from c_xsocket import *
 import socket
 
 def main():
-	if len(sys.argv) != 3:
+	if len(sys.argv) != 4:
 		usage()
 	else:
 		gateway()
 
 def usage():
     sys.stdout = sys.stderr
-    print 'Usage: xia-udp-gateway name address'
+    print 'Usage: xia-udp-gateway name address timeout'
     sys.exit(2)    
 
 def gateway():	
@@ -30,7 +30,7 @@ def gateway():
 	
 	UDP_PORT = 3000	
 	MAXLEN = 120	
-	TIMEOUT = 1 # seconds
+	TIMEOUT = int(sys.argv[3]) # seconds
 	try:
 		SID = XmakeNewSID()
 		sock = Xsocket(XSOCK_DGRAM)

@@ -49,7 +49,7 @@ setup()
 	TIMEOUT=1
 	DATASIZE=8
 	REQUESTS=10
-	DELAY=30
+	DELAY=10
 	
 	FIA=xia
 	
@@ -120,6 +120,7 @@ print_config()
 	echo "Requests: $REQUESTS"
 	echo "Datasize: $DATASIZE bytes"
 	echo "Delay: $DELAY s"
+	echo "UDP Timeout: $TIMEOUT s"
 	echo
 	echo "Future Internet Architecture: $FIA"
 	echo
@@ -220,7 +221,7 @@ star_topology()
 		do      
 	   		z="$(( $GATEWAYS * ( $i - 1 ) + $j ))"		
 	   		echo "Gateway $z"					
-	   		docker run -v $DATAVOLUME:/$DATAVOLUME -d -e DELAY=$DELAY -e GATEWAYROUTER=$i -e GATEWAY=$z --sysctl net.ipv6.conf.all.disable_ipv6=0 --privileged --net=Gateways_Network_$i --name Gateway_$z $GATEWAYIMAGE
+	   		docker run -v $DATAVOLUME:/$DATAVOLUME -d -e TIMEOUT=$TIMEOUT -e DELAY=$DELAY -e GATEWAYROUTER=$i -e GATEWAY=$z --sysctl net.ipv6.conf.all.disable_ipv6=0 --privileged --net=Gateways_Network_$i --name Gateway_$z $GATEWAYIMAGE
 	   		echo
 	   	done
 	done
@@ -254,7 +255,7 @@ single_network()
 	for i in `seq 1 $GATEWAYS`;
 	do
 		echo "Starting Gateway"
-		docker run -v $DATAVOLUME:/$DATAVOLUME -d -e GATEWAYROUTERS=$GATEWAYROUTERS -e DELAY=$DELAY -e GATEWAYROUTER=1 -e GATEWAY=$i --sysctl net.ipv6.conf.all.disable_ipv6=0 --privileged --name Gateway_$i $GATEWAYIMAGE
+		docker run -v $DATAVOLUME:/$DATAVOLUME -d -e TIMEOUT=$TIMEOUT -e GATEWAYROUTERS=$GATEWAYROUTERS -e DELAY=$DELAY -e GATEWAYROUTER=1 -e GATEWAY=$i --sysctl net.ipv6.conf.all.disable_ipv6=0 --privileged --name Gateway_$i $GATEWAYIMAGE
 		echo
 	done
 	for i in `seq 1 $CLIENTS`;
@@ -278,7 +279,7 @@ manual_network()
 	docker run -d --net=gatewaynet -v xiotvolume:/xiotvolume -e DELAY=30 --name gatewayrouter xia-router
 	docker network connect servernet gatewayrouter
 	
-	docker run -itd --net=gatewaynet -v xiotvolume:/xiotvolume -e DELAY=30 -e GATEWAYROUTER=1 -e GATEWAY=1 --sysctl net.ipv6.conf.all.disable_ipv6=0 --privileged xia-gateway	
+	docker run -itd --net=gatewaynet -v xiotvolume:/xiotvolume -e TIMEOUT=1 -e DELAY=30 -e GATEWAYROUTER=1 -e GATEWAY=1 --sysctl net.ipv6.conf.all.disable_ipv6=0 --privileged xia-gateway	
 	
 	docker run -d --net=clientnet -v xiotvolume:/xiotvolume -e DELAY=30 --name clientrouter xia-router
 	docker network connect servernet clientrouter

@@ -2,7 +2,7 @@
 
 service rsyslog start
 
-sleep 10
+sleep $DELAY
 
 cp /xiotvolume/resolv.conf /xia-core/etc/resolv.conf
 

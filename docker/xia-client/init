@@ -2,12 +2,12 @@
 
 service rsyslog start
 
-sleep 30
+sleep $(($DELAY * 3))
 
 cd xia-core/bin
 ./xianet -t start
 
-sleep 10
+sleep $(($DELAY * 6))
 
 cd ../applications/example
 ./echotester $MOTES $GATEWAYS $GATEWAYROUTERS $DATASIZE $REQUESTS
