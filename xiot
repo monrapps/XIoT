@@ -45,10 +45,10 @@ setup()
 	CLIENTROUTERS=1
 	GATEWAYS=1
 	GATEWAYROUTERS=1
-	MOTES=1
+	MOTES=9
 	TIMEOUT=1
 	DATASIZE=8
-	REQUESTS=10
+	REQUESTS=100
 	DELAY=10
 	
 	FIA=xia
@@ -221,7 +221,7 @@ star_topology()
 		do      
 	   		z="$(( $GATEWAYS * ( $i - 1 ) + $j ))"		
 	   		echo "Gateway $z"					
-	   		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e TIMEOUT=$TIMEOUT -e DELAY=$DELAY -e GATEWAYROUTER=$i -e GATEWAY=$z --sysctl net.ipv6.conf.all.disable_ipv6=0 --privileged --net=Gateways_Network_$i --name Gateway_$z $GATEWAYIMAGE
+	   		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e TIMEOUT=$TIMEOUT -e DELAY=$DELAY -e MOTES=$MOTES -e GATEWAYROUTER=$i -e GATEWAY=$z --sysctl net.ipv6.conf.all.disable_ipv6=0 --privileged --net=Gateways_Network_$i --name Gateway_$z $GATEWAYIMAGE
 	   		echo
 	   	done
 	done
@@ -255,7 +255,7 @@ single_network()
 	for i in `seq 1 $GATEWAYS`;
 	do
 		echo "Starting Gateway"
-		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e TIMEOUT=$TIMEOUT -e GATEWAYROUTERS=$GATEWAYROUTERS -e DELAY=$DELAY -e GATEWAYROUTER=1 -e GATEWAY=$i --sysctl net.ipv6.conf.all.disable_ipv6=0 --privileged --name Gateway_$i $GATEWAYIMAGE
+		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e TIMEOUT=$TIMEOUT -e MOTES=$MOTES -e GATEWAYROUTERS=$GATEWAYROUTERS -e DELAY=$DELAY -e GATEWAYROUTER=1 -e GATEWAY=$i --sysctl net.ipv6.conf.all.disable_ipv6=0 --privileged --name Gateway_$i $GATEWAYIMAGE
 		echo
 	done
 	for i in `seq 1 $CLIENTS`;

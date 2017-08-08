@@ -23,30 +23,33 @@ def getipv6():
 			for y in x:
 				count = count + 1
 				if y == "/":
-					ipv6_list.append(x[:count])
+					ipv6_list.append(x[:count])					
+		elif x[17:23]  == "aaaa::":
+			for y in range(2, len(x)):
+				if x[y] == "/":
+					ipv6_list.append(x[17:y])
 
 
 def main():
-	if len(sys.argv) != 4:
+	if len(sys.argv) != 5:
 		usage()
 	else:
 		gateway()
 
 def usage():
     sys.stdout = sys.stderr
-    print 'Usage: xia-udp-gateway name address timeout'
+    print 'Usage: xia-udp-gateway mote gateway gatewayrouter timeout'
     sys.exit(2)    
 
 def gateway():	
 	getipv6()
-	#UDP_IP = sys.argv[2]
-	UDP_IP = ipv6_list[0]
+	UDP_IP = ipv6_list[int(sys.argv[1])]
 	print UDP_IP
-	NAME = sys.argv[1]
+	NAME = sys.argv[1]+"."+sys.argv[2]+"."+sys.argv[3]
 	
 	UDP_PORT = 3000	
 	MAXLEN = 120	
-	TIMEOUT = int(sys.argv[3]) # seconds
+	TIMEOUT = int(sys.argv[4]) # seconds
 	try:
 		SID = XmakeNewSID()
 		sock = Xsocket(XSOCK_DGRAM)

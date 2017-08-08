@@ -19,5 +19,11 @@ wget http://[aaaa::212:7401:1:101]/
 cat index.html
 
 ./getlocaldag
-./xia-udp-gateway 1.$GATEWAY.$GATEWAYROUTER aaaa::212:7402:2:202 $TIMEOUT
+
+for i in $(seq 1 $MOTES)
+do
+	./xia-udp-gateway $i $GATEWAY $GATEWAYROUTER $TIMEOUT &
+done
+
+tail -f /var/log/dmesg
 
