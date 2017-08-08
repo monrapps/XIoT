@@ -203,7 +203,7 @@ star_topology()
 	echo
 		
 	echo "Server"
-	docker run -v $DATAVOLUME:/$DATAVOLUME -d -e DELAY=$DELAY --net=Server_Network --name Server $SERVERIMAGE	
+	docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --net=Server_Network --name Server $SERVERIMAGE	
 	echo
 		
 	for i in $(seq 1 $GATEWAYROUTERS)
@@ -213,7 +213,7 @@ star_topology()
 		echo
 		
 		echo "Gateway Router $i"   		
-		docker run -v $DATAVOLUME:/$DATAVOLUME -d -e DELAY=$DELAY --net=Gateways_Network_$i --name Gateway_Router_$i $GATEWAYROUTERIMAGE	
+		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --net=Gateways_Network_$i --name Gateway_Router_$i $GATEWAYROUTERIMAGE	
 		docker network connect Server_Network Gateway_Router_$i
 		echo	
 			
@@ -221,7 +221,7 @@ star_topology()
 		do      
 	   		z="$(( $GATEWAYS * ( $i - 1 ) + $j ))"		
 	   		echo "Gateway $z"					
-	   		docker run -v $DATAVOLUME:/$DATAVOLUME -d -e TIMEOUT=$TIMEOUT -e DELAY=$DELAY -e GATEWAYROUTER=$i -e GATEWAY=$z --sysctl net.ipv6.conf.all.disable_ipv6=0 --privileged --net=Gateways_Network_$i --name Gateway_$z $GATEWAYIMAGE
+	   		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e TIMEOUT=$TIMEOUT -e DELAY=$DELAY -e GATEWAYROUTER=$i -e GATEWAY=$z --sysctl net.ipv6.conf.all.disable_ipv6=0 --privileged --net=Gateways_Network_$i --name Gateway_$z $GATEWAYIMAGE
 	   		echo
 	   	done
 	done
@@ -233,7 +233,7 @@ star_topology()
 		echo
 		
 		echo "Client Router $i"	
-		docker run -v $DATAVOLUME:/$DATAVOLUME -d -e DELAY=$DELAY --net=Clients_Network_$i --name Client_Router_$i $CLIENTROUTERIMAGE		
+		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --net=Clients_Network_$i --name Client_Router_$i $CLIENTROUTERIMAGE		
 			docker network connect Server_Network Client_Router_$i	
 		echo
 		
@@ -250,12 +250,12 @@ star_topology()
 single_network()
 {
 	echo "Starting Server"
-	docker run -d xia-server	
+	docker run -itd xia-server	
 	echo
 	for i in `seq 1 $GATEWAYS`;
 	do
 		echo "Starting Gateway"
-		docker run -v $DATAVOLUME:/$DATAVOLUME -d -e TIMEOUT=$TIMEOUT -e GATEWAYROUTERS=$GATEWAYROUTERS -e DELAY=$DELAY -e GATEWAYROUTER=1 -e GATEWAY=$i --sysctl net.ipv6.conf.all.disable_ipv6=0 --privileged --name Gateway_$i $GATEWAYIMAGE
+		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e TIMEOUT=$TIMEOUT -e GATEWAYROUTERS=$GATEWAYROUTERS -e DELAY=$DELAY -e GATEWAYROUTER=1 -e GATEWAY=$i --sysctl net.ipv6.conf.all.disable_ipv6=0 --privileged --name Gateway_$i $GATEWAYIMAGE
 		echo
 	done
 	for i in `seq 1 $CLIENTS`;
@@ -274,14 +274,14 @@ manual_network()
 	docker network create gatewaynet		
 	docker network create clientnet	
 	
-	docker run -d --net=servernet -v xiotvolume:/xiotvolume -e DELAY=30 xia-server
+	docker run -itd --net=servernet -v xiotvolume:/xiotvolume -e DELAY=30 xia-server
 	
-	docker run -d --net=gatewaynet -v xiotvolume:/xiotvolume -e DELAY=30 --name gatewayrouter xia-router
+	docker run -itd --net=gatewaynet -v xiotvolume:/xiotvolume -e DELAY=30 --name gatewayrouter xia-router
 	docker network connect servernet gatewayrouter
 	
 	docker run -itd --net=gatewaynet -v xiotvolume:/xiotvolume -e TIMEOUT=1 -e DELAY=30 -e GATEWAYROUTER=1 -e GATEWAY=1 --sysctl net.ipv6.conf.all.disable_ipv6=0 --privileged xia-gateway	
 	
-	docker run -d --net=clientnet -v xiotvolume:/xiotvolume -e DELAY=30 --name clientrouter xia-router
+	docker run -itd --net=clientnet -v xiotvolume:/xiotvolume -e DELAY=30 --name clientrouter xia-router
 	docker network connect servernet clientrouter
 	
 	docker run -it --net=clientnet -v xiotvolume:/xiotvolume -e MOTES=1 -e DELAY=30 -e GATEWAYS=1 -e GATEWAYROUTERS=1 -e DATASIZE=8 -e REQUESTS=10 xia-client

@@ -13,6 +13,19 @@ sys.path.append(XIADIR + '/api/lib')
 from c_xsocket import *
 import socket
 
+ipv6_list = []
+
+def getipv6():
+	text = open('index.html').readlines()
+	for x in text:
+		if x[:6] == "aaaa::":
+			count = -1
+			for y in x:
+				count = count + 1
+				if y == "/":
+					ipv6_list.append(x[:count])
+
+
 def main():
 	if len(sys.argv) != 4:
 		usage()
@@ -25,7 +38,10 @@ def usage():
     sys.exit(2)    
 
 def gateway():	
-	UDP_IP = sys.argv[2]
+	getipv6()
+	#UDP_IP = sys.argv[2]
+	UDP_IP = ipv6_list[0]
+	print UDP_IP
 	NAME = sys.argv[1]
 	
 	UDP_PORT = 3000	

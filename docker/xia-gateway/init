@@ -11,14 +11,13 @@ java -mx512m -jar /contiki/tools/cooja/dist/cooja.jar -nogui="/ipv6-rpl-udp.csc"
 
 sleep $(($DELAY * 3))
 /contiki/tools/tunslip6 -a 127.0.0.1 aaaa::1/64 &
-sleep $(($DELAY / 2))
-
-#sleep 30
-#cd /
-#wget http://[aaaa::212:7401:1:101]/
-#cat index.html | grep -c aaaa
+sleep $(($DELAY * 2))
 
 cd /xia-core/applications/example
+
+wget http://[aaaa::212:7401:1:101]/
+cat index.html
+
 ./getlocaldag
 ./xia-udp-gateway 1.$GATEWAY.$GATEWAYROUTER aaaa::212:7402:2:202 $TIMEOUT
 
