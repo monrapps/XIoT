@@ -12,9 +12,9 @@ help()
 
 Start or stop the XIoT network testing services.
 
-usage: $NAME [-cgCGmdtr] [-c <clients_per_router>] [-g <gateways_per_router>] [-m <motes_per_gateway>]
-             [-C <client_routers>] [-G <gateway_routers>] [-r <resquests>]
-             [-t <timeout>] [-d <data_size>]  [start|stop|kill|prune|single|build|print|manual]
+usage: $NAME [-cgmCGlrtvd] [-c <clients_per_router>] [-g <gateways_per_router>] [-m <motes_per_gateway>]
+             [-C <client_routers>] [-G <gateway_routers>] [-r <resquests>] [-l <data_size>]
+             [-t <timeout>] [-d <delay>] [-v <data_volume>] [start|stop|kill|prune|single|build|print]
 where:
   -c Clients per Clients Routers
   -g Gateways per Gateways Routers
@@ -201,29 +201,20 @@ star_topology()
 	echo "Server Network"
 	docker network create Server_Network	
 	echo
-		
+	
 	echo "Server"
 	docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --net=Server_Network --name Server $SERVERIMAGE	
 	echo
-		
+	
 	for i in $(seq 1 $GATEWAYROUTERS)
 	do
 		echo "Gateways_Network_$i"
 		docker network create Gateways_Network_$i		
 		echo
-		
 		echo "Gateway Router $i"   		
 		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --net=Gateways_Network_$i --name Gateway_Router_$i $GATEWAYROUTERIMAGE	
 		docker network connect Server_Network Gateway_Router_$i
-		echo	
-			
-		for j in $(seq 1 $GATEWAYS)
-		do      
-	   		z="$(( $GATEWAYS * ( $i - 1 ) + $j ))"		
-	   		echo "Gateway $z"					
-	   		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e TIMEOUT=$TIMEOUT -e DELAY=$DELAY -e MOTES=$MOTES -e GATEWAYROUTER=$i -e GATEWAY=$z --sysctl net.ipv6.conf.all.disable_ipv6=0 --privileged --net=Gateways_Network_$i --name Gateway_$z $GATEWAYIMAGE
-	   		echo
-	   	done
+		echo
 	done
 	
 	for i in $(seq 1 $CLIENTROUTERS)
@@ -231,12 +222,25 @@ star_topology()
 		echo "Clients_Network_$i"
 		docker network create Clients_Network_$i		
 		echo
-		
 		echo "Client Router $i"	
 		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --net=Clients_Network_$i --name Client_Router_$i $CLIENTROUTERIMAGE		
 			docker network connect Server_Network Client_Router_$i	
 		echo
+	done
 		
+	for i in $(seq 1 $GATEWAYROUTERS)
+	do
+		for j in $(seq 1 $GATEWAYS)
+		do      
+	   		z="$(( $GATEWAYS * ( $i - 1 ) + $j ))"		
+	   		echo "Gateway $z"					
+	   		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e TIMEOUT=$TIMEOUT -e DELAY=$DELAY -e MOTES=$MOTES -e GATEWAYROUTER=$i -e GATEWAY=$j --sysctl net.ipv6.conf.all.disable_ipv6=0 --privileged --net=Gateways_Network_$i --name Gateway_$z $GATEWAYIMAGE
+	   		echo
+	   	done
+	done
+	
+	for i in $(seq 1 $CLIENTROUTERS)
+	do	
 		for j in $(seq 1 $CLIENTS)
 		do
 			z="$(( $CLIENTS * ( $i - 1 ) + $j ))"		
@@ -266,27 +270,6 @@ single_network()
 	done
 }
 
-manual_network()
-{
-	docker volume create xiotvolume
-	
-	docker network create servernet	
-	docker network create gatewaynet		
-	docker network create clientnet	
-	
-	docker run -itd --net=servernet -v xiotvolume:/xiotvolume -e DELAY=30 xia-server
-	
-	docker run -itd --net=gatewaynet -v xiotvolume:/xiotvolume -e DELAY=30 --name gatewayrouter xia-router
-	docker network connect servernet gatewayrouter
-	
-	docker run -itd --net=gatewaynet -v xiotvolume:/xiotvolume -e TIMEOUT=1 -e DELAY=30 -e GATEWAYROUTER=1 -e GATEWAY=1 --sysctl net.ipv6.conf.all.disable_ipv6=0 --privileged xia-gateway	
-	
-	docker run -itd --net=clientnet -v xiotvolume:/xiotvolume -e DELAY=30 --name clientrouter xia-router
-	docker network connect servernet clientrouter
-	
-	docker run -it --net=clientnet -v xiotvolume:/xiotvolume -e MOTES=1 -e DELAY=30 -e GATEWAYS=1 -e GATEWAYROUTERS=1 -e DATASIZE=8 -e REQUESTS=10 xia-client
-}
-
 #
 # SCRIPT STARTS HERE
 #
@@ -294,9 +277,6 @@ setup $@
 shift $((OPTIND-1))
 
 case $1 in
-	manual)		
-		manual_network
-		;;
 	single)
 		print_config
 		single_network

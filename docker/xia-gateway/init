@@ -16,7 +16,6 @@ sleep $(($DELAY * 2))
 cd /xia-core/applications/example
 
 wget http://[aaaa::212:7401:1:101]/
-cat index.html
 
 ./getlocaldag
 
