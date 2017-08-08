@@ -20,6 +20,8 @@ cat index.html
 
 ./getlocaldag
 
+MOTES=$(grep -c aaaa:: index.html)
+
 for i in $(seq 1 $MOTES)
 do
 	./xia-udp-gateway $i $GATEWAY $GATEWAYROUTER $TIMEOUT &
