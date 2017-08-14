@@ -25,10 +25,8 @@ def main():
 
 def usage():
     sys.stdout = sys.stderr
-    print 'Usage: echotester client clientrouter motes gateways gatewayrouters datasize requests'
-    print 'Or: echotester -t hostname'
+    print 'Usage: xia-echo-tester client clientrouter motes gateways gatewayrouters datasize requests'
     sys.exit(2) 
-
 
 def echotester():
 	SRC_CLIENT = int(sys.argv[1])
@@ -79,14 +77,16 @@ def echotester():
 				print "data error"
 				result = "data error"
 				
-			fields = [SRC_CLIENT,SRC_CLIENTROUTER,DST_MOTE,DST_GATEWAY,DST_GATEWAYROUTER,"%d" % latency,result]
+			fields = [SRC_CLIENT,SRC_CLIENTROUTER,DST_MOTE,DST_GATEWAY,DST_GATEWAYROUTER,REQ,"%d" % latency,result]
 			
-			with open(r'/xiotvolume/log.csv', 'a') as f:
+			with open(r'/xiotvolume/clientslog.csv', 'a') as f:
     				writer = csv.writer(f, delimiter=';')
     				writer.writerow(fields)
 		except:
 			print "Xsocket error"
+			fields = [SRC_CLIENT,SRC_CLIENTROUTER,'','','','','',"Xsocket error"]
+			with open(r'/xiotvolume/clientslog.csv', 'a') as f:
+    				writer = csv.writer(f, delimiter=';')
+    				writer.writerow(fields)
 main()
-		
-# TODO: CSV
 

@@ -18,7 +18,7 @@ COPY make-gateway ./make-gateway
 
 RUN ./make-gateway
 
-COPY ipv6-rpl-udp.csc ./ipv6-rpl-udp.csc
+COPY xia-ipv6-rpl-udp.csc ./xia-ipv6-rpl-udp.csc
 
 COPY xia-udp-gateway ./xia-core/applications/example/xia-udp-gateway
 

@@ -1,6 +1,6 @@
 FROM xia-base
 
-COPY echotester ./xia-core/applications/example/echotester
+COPY xia-echo-tester ./xia-core/applications/example/xia-echo-tester
 
 COPY init ./init
 

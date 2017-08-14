@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 import os
 import re
+import csv
 import sys
 import time
 
@@ -45,7 +46,11 @@ def gateway():
 	getipv6()
 	UDP_IP = ipv6_list[int(sys.argv[1])-1]
 	print UDP_IP
-	NAME = sys.argv[1]+"."+sys.argv[2]+"."+sys.argv[3]
+	MOTE = sys.argv[1]
+	GATEWAY = sys.argv[2]
+	GATEWAYROUTER = sys.argv[3]
+	NAME = MOTE+"."+GATEWAY+"."+GATEWAYROUTER
+	print NAME
 	
 	UDP_PORT = 3000	
 	MAXLEN = 120	
@@ -58,8 +63,10 @@ def gateway():
 		hid =  re.findall(r'HID:[0-9A-F]+', address, re.I)	
 		dag = "RE %s %s %s" % (ad[0],hid[0],SID) 
 		XregisterName(NAME, dag)
-		Xbind(sock, dag)
+		Xbind(sock, dag)		
+		REQ = 0
 		while (1):
+			REQ = REQ + 1
 			print "waiting for xdp-data"
 			(data, cdag) = Xrecvfrom(sock, MAXLEN, 0)			 			
 			print "received", len(data), "bytes from", cdag,":", data   
@@ -72,10 +79,19 @@ def gateway():
         			data, addr = udpsock.recvfrom(120)	
         			latency = (time.time() * 1000) - latency	
 				print "received", len(data), "bytes from", addr, ":", data     
-				print "latency: %d ms" % latency					
+				print "latency: %d ms" % latency
+				fields = [MOTE,GATEWAY,GATEWAYROUTER,REQ,"%d" % latency,"success"]
+				with open(r'/xiotvolume/gatewayslog.csv', 'a') as f:
+    					writer = csv.writer(f, delimiter=';')
+    					writer.writerow(fields)
 			except socket.timeout:	
 				data = "udp-timeout"
-				print "udp-timeout"
+				latency = (time.time() * 1000) - latency
+				print data
+				fields = [MOTE,GATEWAY,GATEWAYROUTER,REQ,"%d" % latency,"udp-timeout"]
+				with open(r'/xiotvolume/gatewayslog.csv', 'a') as f:
+    					writer = csv.writer(f, delimiter=';')
+    					writer.writerow(fields)
 			Xsendto(sock, data, 0, cdag)
 		Xclose(sock)
 		XremoveSID(SID)	
