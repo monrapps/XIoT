@@ -3,6 +3,7 @@ import sys
 import os
 import time
 
+import csv
 import string
 import random
 
@@ -17,56 +18,38 @@ from c_xsocket import *
 MAXLEN = 120
 
 def main():
-	if len(sys.argv) == 3:
-		if sys.argv[1] == "-t":
-			echoterminal()
-		else:
-			usage()
-	elif len(sys.argv) != 6:
+	if len(sys.argv) != 8:
 		usage()
 	else:
 		echotester()
 
 def usage():
     sys.stdout = sys.stderr
-    print 'Usage: echotester motes gateways gatewayrouters datasize requests'
+    print 'Usage: echotester client clientrouter motes gateways gatewayrouters datasize requests'
     print 'Or: echotester -t hostname'
     sys.exit(2) 
-    
-def echoterminal():
-	NAME = sys.argv[2]
-	try:
-		sock = Xsocket(XSOCK_DGRAM)
-		dag = XgetDAGbyName(NAME)
-		while (1):
-			print "Please enter the message (blank line to exit):"
-			text = sys.stdin.readline()
-			text = text.strip()
-			if (len(text) == 0):
-				break
-			latency = time.time() * 1000
-			Xsendto(sock, text, 0, dag)
-			(data, sdag) = Xrecvfrom(sock, MAXLEN, 0)
-			latency = (time.time() * 1000) - latency
-			print "received", len(data), "bytes from", sdag,":", data   			
-			print "latency: %d ms" % latency	
-		Xclose(sock)
-	except:
-		print "Xsocket error"
-		
+
 
 def echotester():
-	MOTES =  int(sys.argv[1])	
-	GATEWAYS = int(sys.argv[2])
-	GATEWAYROUTERS = int(sys.argv[3])
-	DATASIZE = int(sys.argv[4])	
-	REQUESTS = int(sys.argv[5])
+	SRC_CLIENT = int(sys.argv[1])
+	SRC_CLIENTROUTER = int(sys.argv[2])	
+	MOTES = int(sys.argv[3])	
+	GATEWAYS = int(sys.argv[4])
+	GATEWAYROUTERS = int(sys.argv[5])
+	DATASIZE = int(sys.argv[6])	
+	REQUESTS = int(sys.argv[7])
 	
 	REQ = 0
 	while REQ < REQUESTS:
-		try:
-			HOSTNAME = str(random.randint(1,MOTES))+"."+str(random.randint(1,GATEWAYS))+"."+str(random.randint(1,GATEWAYROUTERS))
+		try:			
+			DST_GATEWAYROUTER = str(random.randint(1,GATEWAYROUTERS))
+			DST_GATEWAY = str(random.randint(1,GATEWAYS))
+			DST_MOTE = str(random.randint(1,MOTES))
+			
+			HOSTNAME = DST_MOTE+"."+DST_GATEWAY+"."+DST_GATEWAYROUTER
+			
 			print HOSTNAME
+			
 			sock = Xsocket(XSOCK_DGRAM)		
 			dag = XgetDAGbyName(HOSTNAME)
 			
@@ -88,10 +71,19 @@ def echotester():
 		
 			if data == text:
 				print "success"
+				result = "success"
 			elif data == "udp-timeout":
 				print "udp error"
+				result = "udp-error"
 			else:
 				print "data error"
+				result = "data error"
+				
+			fields = [SRC_CLIENT,SRC_CLIENTROUTER,DST_MOTE,DST_GATEWAY,DST_GATEWAYROUTER,"%d" % latency,result]
+			
+			with open(r'/xiotvolume/log.csv', 'a') as f:
+    				writer = csv.writer(f, delimiter=';')
+    				writer.writerow(fields)
 		except:
 			print "Xsocket error"
 main()

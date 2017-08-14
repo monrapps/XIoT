@@ -245,7 +245,7 @@ star_topology()
 		do
 			z="$(( $CLIENTS * ( $i - 1 ) + $j ))"		
 			echo "Client $z"
-			docker run -it -v $DATAVOLUME:/$DATAVOLUME --net=Clients_Network_$i -e DELAY=$DELAY -e MOTES=$MOTES -e GATEWAYS=$GATEWAYS -e GATEWAYROUTERS=$GATEWAYROUTERS -e DATASIZE=$DATASIZE -e REQUESTS=$REQUESTS --name Client_$z $CLIENTIMAGE
+			docker run -itd -v $DATAVOLUME:/$DATAVOLUME --net=Clients_Network_$i -e CLIENT=$j -e CLIENTROUTER=$i -e DELAY=$DELAY -e MOTES=$MOTES -e GATEWAYS=$GATEWAYS -e GATEWAYROUTERS=$GATEWAYROUTERS -e DATASIZE=$DATASIZE -e REQUESTS=$REQUESTS --name Client_$z $CLIENTIMAGE
 			echo
 		done
 	done
@@ -265,7 +265,7 @@ single_network()
 	for i in `seq 1 $CLIENTS`;
 	do
 		echo "Starting Client"
-		docker run -it -v $DATAVOLUME:/$DATAVOLUME -e DELAY=$DELAY -e MOTES=$MOTES -e GATEWAYS=$GATEWAYS -e GATEWAYROUTERS=$GATEWAYROUTERS -e DATASIZE=$DATASIZE -e REQUESTS=$REQUESTS --name Client_$i $CLIENTIMAGE
+		docker run -itd -v $DATAVOLUME:/$DATAVOLUME -e DELAY=$DELAY -e MOTES=$MOTES -e GATEWAYS=$GATEWAYS -e GATEWAYROUTERS=$GATEWAYROUTERS -e DATASIZE=$DATASIZE -e REQUESTS=$REQUESTS --name Client_$i $CLIENTIMAGE
 		echo
 	done
 }

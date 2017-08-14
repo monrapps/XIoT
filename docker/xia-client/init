@@ -10,5 +10,5 @@ cd xia-core/bin
 sleep $(($DELAY * 6))
 
 cd ../applications/example
-./echotester $MOTES $GATEWAYS $GATEWAYROUTERS $DATASIZE $REQUESTS
+./echotester $CLIENT $CLIENTROUTER $MOTES $GATEWAYS $GATEWAYROUTERS $DATASIZE $REQUESTS
 
