@@ -209,23 +209,23 @@ star_topology()
 	
 	for i in $(seq 1 $GATEWAYROUTERS)
 	do
-		echo "Gateways_Network_$i"
+		echo "Gateways Network $i"
 		docker network create Gateways_Network_$i		
 		echo
-		echo "Gateway Router $i"   		
-		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --net=Gateways_Network_$i --name Gateway_Router_$i $GATEWAYROUTERIMAGE	
-		docker network connect Server_Network Gateway_Router_$i
+		echo "Gateways Router $i"   		
+		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --net=Gateways_Network_$i --name Gateways_Router_$i $GATEWAYROUTERIMAGE	
+		docker network connect Server_Network Gateways_Router_$i
 		echo
 	done
 	
 	for i in $(seq 1 $CLIENTROUTERS)
 	do
-		echo "Clients_Network_$i"
+		echo "Clients Network $i"
 		docker network create Clients_Network_$i		
 		echo
-		echo "Client Router $i"	
-		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --net=Clients_Network_$i --name Client_Router_$i $CLIENTROUTERIMAGE		
-			docker network connect Server_Network Client_Router_$i	
+		echo "Clients Router $i"	
+		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --net=Clients_Network_$i --name Clients_Router_$i $CLIENTROUTERIMAGE		
+			docker network connect Server_Network Clients_Router_$i	
 		echo
 	done
 		
@@ -276,6 +276,38 @@ stats()
 	docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemPerc}}\t{{.MemUsage}}\t{{.PIDs}}\t{{.NetIO}}\t{{.BlockIO}}"
 }
 
+collect()
+{
+	#rm -r $XIOTDIR/logs/$HOSTNAME
+	mkdir $XIOTDIR/logs/$HOSTNAME
+	
+	START_TIME=$SECONDS
+	mkdir "$XIOTDIR/logs/$HOSTNAME/d $DELAY r $REQUESTS l $DATASIZE g $GATEWAYS G $GATEWAYROUTERS c $CLIENTS C $CLIENTROUTERS"
+	while [ $(docker stats --format "table {{.Name}}" --no-stream | grep -c Client_) != '0' ]
+	do
+		CPU=$(top -bn 2 | grep '^%Cpu' | tail -n 1 | gawk '{print $2+$4+$6}')		
+		ELAPSED_TIME=$(($SECONDS - $START_TIME))
+		clear
+		print_config
+		echo "Test running..."
+		echo
+		echo "$(($ELAPSED_TIME/60)) min $(($ELAPSED_TIME%60)) sec" 
+		echo
+		echo "CPU Usage: "$CPU%
+		docker stats --format "{{.Name}};{{.CPUPerc}};{{.MemPerc}};{{.MemUsage}};{{.PIDs}};{{.NetIO}};{{.BlockIO}};$ELAPSED_TIME;$CPU" --no-stream >> "$XIOTDIR/logs/$HOSTNAME/d $DELAY r $REQUESTS l $DATASIZE g $GATEWAYS G $GATEWAYROUTERS c $CLIENTS C $CLIENTROUTERS/running-stats.csv"
+	done
+	clear
+	print_config
+	echo "Test ended!"
+	echo
+	echo "$(($ELAPSED_TIME/60)) min $(($ELAPSED_TIME%60)) sec" 
+	echo
+	cp /var/lib/docker/volumes/$DATAVOLUME/_data/*.csv "$XIOTDIR/logs/$HOSTNAME/d $DELAY r $REQUESTS l $DATASIZE g $GATEWAYS G $GATEWAYROUTERS c $CLIENTS C $CLIENTROUTERS/"
+	stop_all
+	prune_networks
+	prune_volumes
+}
+
 #
 # SCRIPT STARTS HERE
 #
@@ -296,6 +328,7 @@ case $1 in
 	start)
 		print_config
 		star_topology
+		collect
 		;;
 	build)
 		build_all
