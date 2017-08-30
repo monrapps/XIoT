@@ -279,6 +279,7 @@ stats()
 collect()
 {
 	#rm -r $XIOTDIR/logs/$HOSTNAME
+	mkdir $XIOTDIR/logs
 	mkdir $XIOTDIR/logs/$HOSTNAME
 	
 	START_TIME=$SECONDS
