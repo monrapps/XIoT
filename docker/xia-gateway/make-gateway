@@ -1,20 +1,25 @@
 #!/bin/sh
 
+# Download contiki submodules
 cd contiki 
 git submodule update --init 
 
+# Build tunslip6
 cd tools
 make tunslip6
 
+# Build Cooja
 cd cooja
 ant run
 
+# Build Border Router mote firmware
 cd /contiki/examples/ipv6/rpl-border-router 
 make TARGET=sky
 
+# Build echo-server mote firmware
 cd /contiki/examples/cc2538dk/udp-ipv6-echo-server
 make TARGET=sky
 
+# Build xia examples + Gateway service
 cd /xia-core/applications/example
 make 
-
