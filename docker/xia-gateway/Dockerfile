@@ -1,7 +1,5 @@
 FROM xia-base
 
-RUN apt-get -y install iputils-ping
-
 # Install Java to run Cooja
 RUN apt-get -y install ant openjdk-8-jdk
 
@@ -34,7 +32,6 @@ COPY xia-udp-gateway ./xia-core/applications/example/xia-udp-gateway
 
 # Copy initialization Script
 COPY init ./init
-
 
 # Configure initialization script as entrypoint
 ENTRYPOINT ["./init"]
