@@ -1,11 +1,14 @@
 #!/bin/sh
 
+# Start System log
 service rsyslog start
 
+# Start XIA service as Router with Name service
 cd xia-core/bin
 ./xianet -r -n start
 
+# Copy NRS DAG to the Data Volume
 cp /xia-core/etc/resolv.conf /xiotvolume/resolv.conf
 
+# Keep Alive
 tail -f /var/log/dmesg
-
