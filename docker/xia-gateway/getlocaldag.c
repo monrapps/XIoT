@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "Xsocket.h"
 
+// This is a workaround to get the localdag since SWIG api is broken
 int main(){
 	char dag[200], fid[100];
 	int sock = Xsocket(AF_XIA, SOCK_STREAM, 0);	
