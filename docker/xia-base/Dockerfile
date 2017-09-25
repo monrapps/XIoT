@@ -21,9 +21,11 @@ RUN apt-get install -y netcat
 RUN apt-get install -y libxml2 libxml2-dev python-nacl build-essential
 RUN apt-get install -y rsyslog
 
-# tools
+# Install tools
 RUN apt-get install -y net-tools
 
+# Copy XIA instalation Script
 COPY install-xia ./install-xia
 
+# Run XIA instalation Script
 RUN /install-xia
