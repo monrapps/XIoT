@@ -3,7 +3,7 @@
 # Start System log
 service rsyslog start
 
-# Wait 3 delay times for xia-server and xia-routers initialize 
+# Wait 3 delay times for xia-server, xia-routers and xia-gateway initialize 
 sleep $(($DELAY * 3))
 
 # Start XIA service as Host
