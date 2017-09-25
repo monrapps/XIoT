@@ -10,7 +10,7 @@ make tunslip6
 
 # Build Cooja
 cd cooja
-ant run
+ant jar
 
 # Build Border Router mote firmware
 cd /contiki/examples/ipv6/rpl-border-router 
