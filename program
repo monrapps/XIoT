@@ -1,0 +1,6 @@
+#!/bin/sh
+
+sudo ./xiot -r 1 start
+sudo ./xiot -r 2 start
+
+
