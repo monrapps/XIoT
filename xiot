@@ -153,7 +153,7 @@ kill_all()
 
 prune_networks()
 {
-	docker network prune
+	docker network prune --force
 }
 
 prune_volumes()
@@ -161,7 +161,7 @@ prune_volumes()
 	echo "Deleting Volume"
 	docker volume rm $DATAVOLUME
 	echo
-	docker volume prune
+	docker volume prune --force
 }
 
 build_all()
@@ -277,13 +277,9 @@ stats()
 }
 
 collect()
-{
-	#rm -r $XIOTDIR/logs/$HOSTNAME
-	mkdir $XIOTDIR/logs
-	mkdir $XIOTDIR/logs/$HOSTNAME
-	
+{	
 	START_TIME=$SECONDS
-	mkdir "$XIOTDIR/logs/$HOSTNAME/d $DELAY r $REQUESTS l $DATASIZE g $GATEWAYS G $GATEWAYROUTERS c $CLIENTS C $CLIENTROUTERS"
+	mkdir -p "$XIOTDIR/logs/$HOSTNAME/d $DELAY r $REQUESTS l $DATASIZE g $GATEWAYS G $GATEWAYROUTERS c $CLIENTS C $CLIENTROUTERS"
 	while [ $(docker stats --format "table {{.Name}}" --no-stream | grep -c Client_) != '0' ]
 	do
 		CPU=$(top -bn 2 | grep '^%Cpu' | tail -n 1 | gawk '{print $2+$4+$6}')		
