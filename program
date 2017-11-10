@@ -36,6 +36,10 @@ sudo ./xiot -d 30 -r 10000 -l 64 -g 2 -G 1 -c 1 -C 1 start
 
 ############################################################
 
+sudo ./xiot -d 30 -r 10000 -l 16 -g 1 -G 2 -c 1 -C 1 start
+sudo ./xiot -d 30 -r 10000 -l 32 -g 1 -G 2 -c 1 -C 1 start
+sudo ./xiot -d 30 -r 10000 -l 64 -g 1 -G 2 -c 1 -C 1 start
+
 sudo ./xiot -d 30 -r 10000 -l 8 -g 1 -G 2 -c 1 -C 1 start
 sudo ./xiot -d 30 -r 10000 -l 8 -g 1 -G 2 -c 1 -C 2 start
 sudo ./xiot -d 30 -r 10000 -l 8 -g 1 -G 2 -c 1 -C 3 start
@@ -65,6 +69,10 @@ sudo ./xiot -d 30 -r 10000 -l 8 -g 1 -G 2 -c 8 -C 1 start
 
 ############################################################
 
+sudo ./xiot -d 30 -r 10000 -l 16 -g 3 -G 1 -c 1 -C 1 start
+sudo ./xiot -d 30 -r 10000 -l 32 -g 3 -G 1 -c 1 -C 1 start
+sudo ./xiot -d 30 -r 10000 -l 64 -g 3 -G 1 -c 1 -C 1 start
+
 sudo ./xiot -d 30 -r 10000 -l 8 -g 3 -G 1 -c 1 -C 1 start
 sudo ./xiot -d 30 -r 10000 -l 8 -g 3 -G 1 -c 1 -C 2 start
 sudo ./xiot -d 30 -r 10000 -l 8 -g 3 -G 1 -c 1 -C 3 start
@@ -92,6 +100,10 @@ sudo ./xiot -d 30 -r 10000 -l 8 -g 3 -G 1 -c 8 -C 1 start
 
 ############################################################
 
+sudo ./xiot -d 30 -r 10000 -l 16 -g 1 -G 3 -c 1 -C 1 start
+sudo ./xiot -d 30 -r 10000 -l 32 -g 1 -G 3 -c 1 -C 1 start
+sudo ./xiot -d 30 -r 10000 -l 64 -g 1 -G 3 -c 1 -C 1 start
+
 sudo ./xiot -d 30 -r 10000 -l 8 -g 1 -G 3 -c 1 -C 1 start
 sudo ./xiot -d 30 -r 10000 -l 8 -g 1 -G 3 -c 1 -C 2 start
 sudo ./xiot -d 30 -r 10000 -l 8 -g 1 -G 3 -c 1 -C 3 start
@@ -118,6 +130,10 @@ sudo ./xiot -d 30 -r 10000 -l 8 -g 1 -G 3 -c 7 -C 1 start
 sudo ./xiot -d 30 -r 10000 -l 8 -g 1 -G 3 -c 8 -C 1 start
 
 ############################################################
+
+sudo ./xiot -d 30 -r 10000 -l 16-g 2 -G 2 -c 1 -C 1 start
+sudo ./xiot -d 30 -r 10000 -l 32-g 2 -G 2 -c 1 -C 1 start
+sudo ./xiot -d 30 -r 10000 -l 64-g 2 -G 2 -c 1 -C 1 start
 
 sudo ./xiot -d 30 -r 10000 -l 8 -g 2 -G 2 -c 1 -C 1 start
 sudo ./xiot -d 30 -r 10000 -l 8 -g 2 -G 2 -c 1 -C 2 start
