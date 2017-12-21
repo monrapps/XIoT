@@ -26,6 +26,7 @@ where:
   -t Timeout (s) # Gateway to UDP network. There is no timeout on XIA network
   -v Data Volume # Folder name
   -d Delay (s) # Base delay variable for initializations
+  -a Internet Architecture
   
   start   - starts the networks and containers
   stop    - stops all containers
@@ -54,17 +55,11 @@ setup()
 	
 	FIA=xia
 	
-	CLIENTIMAGE=$FIA-client
-	GATEWAYIMAGE=$FIA-gateway
-	CLIENTROUTERIMAGE=$FIA-router
-	GATEWAYROUTERIMAGE=$FIA-router
-	SERVERIMAGE=$FIA-server
-	
 	DATAVOLUME=xiotvolume
 
 	local OPTARG=$2
 
-	while getopts "c:g:C:G:m:d:t:r:v:l:" opt; do
+	while getopts "c:g:C:G:m:d:t:r:v:l:a:" opt; do
 		case $opt in			
 			c)
 				CLIENTS=$OPTARG
@@ -95,6 +90,9 @@ setup()
 				;;
 			l)
 				DATASIZE=$OPTARG
+				;;
+			a)
+				FIA=$OPTARG
 				;;			
 			h)
 				help
@@ -105,6 +103,12 @@ setup()
 				;;
 		esac
 	done
+	
+	CLIENTIMAGE=$FIA-client
+	GATEWAYIMAGE=$FIA-gateway
+	CLIENTROUTERIMAGE=$FIA-router
+	GATEWAYROUTERIMAGE=$FIA-router
+	SERVERIMAGE=$FIA-server
 }
 
 print_config()
