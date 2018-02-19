@@ -204,20 +204,20 @@ star_topology()
 	echo	
 	
 	echo "Server Network"
-	docker network create Server_Network	
+	docker network create --ipv6 --subnet=aaaa::1/64 Server_Network	
 	echo
 	
 	echo "Server"
-	docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --net=Server_Network --name Server $SERVERIMAGE	
+	docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --sysctl net.ipv6.conf.all.disable_ipv6=0 --net=Server_Network --name Server $SERVERIMAGE	
 	echo
 	
 	for i in $(seq 1 $GATEWAYROUTERS)
 	do
 		echo "Gateways Network $i"
-		docker network create Gateways_Network_$i		
+		docker network create --ipv6 --subnet=aaaa::1/64 Gateways_Network_$i		
 		echo
 		echo "Gateways Router $i"   		
-		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --net=Gateways_Network_$i --name Gateways_Router_$i $GATEWAYROUTERIMAGE	
+		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --sysctl net.ipv6.conf.all.disable_ipv6=0 --net=Gateways_Network_$i --name Gateways_Router_$i $GATEWAYROUTERIMAGE	
 		docker network connect Server_Network Gateways_Router_$i
 		echo
 	done
@@ -225,10 +225,10 @@ star_topology()
 	for i in $(seq 1 $CLIENTROUTERS)
 	do
 		echo "Clients Network $i"
-		docker network create Clients_Network_$i		
+		docker network create --ipv6 --subnet=aaaa::1/64 Clients_Network_$i		
 		echo
 		echo "Clients Router $i"	
-		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --net=Clients_Network_$i --name Clients_Router_$i $CLIENTROUTERIMAGE		
+		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --sysctl net.ipv6.conf.all.disable_ipv6=0 --net=Clients_Network_$i --name Clients_Router_$i $CLIENTROUTERIMAGE		
 			docker network connect Server_Network Clients_Router_$i	
 		echo
 	done
@@ -250,7 +250,7 @@ star_topology()
 		do
 			z="$(( $CLIENTS * ( $i - 1 ) + $j ))"		
 			echo "Client $z"
-			docker run -itd -v $DATAVOLUME:/$DATAVOLUME --net=Clients_Network_$i -e CLIENT=$j -e CLIENTROUTER=$i -e DELAY=$DELAY -e MOTES=$MOTES -e GATEWAYS=$GATEWAYS -e GATEWAYROUTERS=$GATEWAYROUTERS -e DATASIZE=$DATASIZE -e REQUESTS=$REQUESTS --name Client_$z $CLIENTIMAGE
+			docker run -itd -v $DATAVOLUME:/$DATAVOLUME --net=Clients_Network_$i -e CLIENT=$j -e CLIENTROUTER=$i -e DELAY=$DELAY -e MOTES=$MOTES -e GATEWAYS=$GATEWAYS -e GATEWAYROUTERS=$GATEWAYROUTERS -e DATASIZE=$DATASIZE -e REQUESTS=$REQUESTS --sysctl net.ipv6.conf.all.disable_ipv6=0 --name Client_$z $CLIENTIMAGE
 			echo
 		done
 	done

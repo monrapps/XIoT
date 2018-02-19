@@ -23,6 +23,7 @@ RUN apt-get install -y rsyslog
 
 # Install tools
 RUN apt-get install -y net-tools
+RUN apt-get install -y iputils-ping
 
 # Copy XIA instalation Script
 COPY install-xia ./install-xia
