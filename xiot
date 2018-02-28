@@ -283,7 +283,7 @@ stats()
 collect()
 {	
 	START_TIME=$SECONDS
-	mkdir -p "$XIOTDIR/logs/$HOSTNAME/d $DELAY r $REQUESTS l $DATASIZE g $GATEWAYS G $GATEWAYROUTERS c $CLIENTS C $CLIENTROUTERS"
+	mkdir -p "$XIOTDIR/logs/$HOSTNAME/$FIA d $DELAY r $REQUESTS l $DATASIZE m $MOTES g $GATEWAYS G $GATEWAYROUTERS c $CLIENTS C $CLIENTROUTERS"
 	while [ $(docker stats --format "table {{.Name}}" --no-stream | grep -c Client_) != '0' ]
 	do
 		CPU=$(top -bn 2 | grep '^%Cpu' | tail -n 1 | gawk '{print $2+$4+$6}')		
@@ -295,7 +295,7 @@ collect()
 		echo "$(($ELAPSED_TIME/60)) min $(($ELAPSED_TIME%60)) sec" 
 		echo
 		echo "CPU Usage: "$CPU%
-		docker stats --format "{{.Name}};{{.CPUPerc}};{{.MemPerc}};{{.MemUsage}};{{.PIDs}};{{.NetIO}};{{.BlockIO}};$ELAPSED_TIME;$CPU" --no-stream >> "$XIOTDIR/logs/$HOSTNAME/d $DELAY r $REQUESTS l $DATASIZE g $GATEWAYS G $GATEWAYROUTERS c $CLIENTS C $CLIENTROUTERS/running-stats.csv"
+		docker stats --format "{{.Name}};{{.CPUPerc}};{{.MemPerc}};{{.MemUsage}};{{.PIDs}};{{.NetIO}};{{.BlockIO}};$ELAPSED_TIME;$CPU" --no-stream >> "$XIOTDIR/logs/$HOSTNAME/$FIA d $DELAY r $REQUESTS l $DATASIZE m $MOTES g $GATEWAYS G $GATEWAYROUTERS c $CLIENTS C $CLIENTROUTERS/running-stats.csv"
 	done
 	clear
 	print_config
@@ -303,7 +303,7 @@ collect()
 	echo
 	echo "$(($ELAPSED_TIME/60)) min $(($ELAPSED_TIME%60)) sec" 
 	echo
-	cp /var/lib/docker/volumes/$DATAVOLUME/_data/*.csv "$XIOTDIR/logs/$HOSTNAME/d $DELAY r $REQUESTS l $DATASIZE g $GATEWAYS G $GATEWAYROUTERS c $CLIENTS C $CLIENTROUTERS/"
+	cp /var/lib/docker/volumes/$DATAVOLUME/_data/*.csv "$XIOTDIR/logs/$HOSTNAME/$FIA d $DELAY r $REQUESTS l $DATASIZE m $MOTES g $GATEWAYS G $GATEWAYROUTERS c $CLIENTS C $CLIENTROUTERS/"
 	stop_all
 	prune_networks
 	prune_volumes
