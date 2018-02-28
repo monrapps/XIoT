@@ -264,13 +264,13 @@ single_network()
 	for i in `seq 1 $GATEWAYS`;
 	do
 		echo "Starting Gateway"
-		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e TIMEOUT=$TIMEOUT -e MOTES=$MOTES -e GATEWAYROUTERS=$GATEWAYROUTERS -e DELAY=$DELAY -e GATEWAYROUTER=1 -e GATEWAY=$i --sysctl net.ipv6.conf.all.disable_ipv6=0 --privileged --name Gateway_$i $GATEWAYIMAGE
+		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e TIMEOUT=$TIMEOUT -e DELAY=$DELAY -e MOTES=$MOTES -e GATEWAYROUTER=1 -e GATEWAY=$i --sysctl net.ipv6.conf.all.disable_ipv6=0 --privileged --name Gateway_$i $GATEWAYIMAGE
 		echo
 	done
 	for i in `seq 1 $CLIENTS`;
 	do
 		echo "Starting Client"
-		docker run -itd -v $DATAVOLUME:/$DATAVOLUME -e DELAY=$DELAY -e MOTES=$MOTES -e GATEWAYS=$GATEWAYS -e GATEWAYROUTERS=$GATEWAYROUTERS -e DATASIZE=$DATASIZE -e REQUESTS=$REQUESTS --name Client_$i $CLIENTIMAGE
+		docker run -itd -v $DATAVOLUME:/$DATAVOLUME -e CLIENT=$i -e CLIENTROUTER=1 -e DELAY=$DELAY -e MOTES=$MOTES -e GATEWAYS=$GATEWAYS -e GATEWAYROUTERS=1 -e DATASIZE=$DATASIZE -e REQUESTS=$REQUESTS --sysctl net.ipv6.conf.all.disable_ipv6=0 --name Client_$i $CLIENTIMAGE
 		echo
 	done
 }
@@ -318,7 +318,8 @@ shift $((OPTIND-1))
 case $1 in
 	single)
 		print_config
-		single_network
+		single_network		
+		collect
 		;;
 	print)
 		print_config
