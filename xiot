@@ -127,7 +127,7 @@ print_config()
 	echo "Delay: $DELAY s"
 	echo "UDP Timeout: $TIMEOUT s"
 	echo
-	echo "Future Internet Architecture: $FIA"
+	echo "Internet Architecture: $FIA"
 	echo
 	echo "Server Image: $SERVERIMAGE"
 	echo "Gateway Router Image: $GATEWAYROUTERIMAGE"
@@ -214,7 +214,7 @@ star_topology()
 	for i in $(seq 1 $GATEWAYROUTERS)
 	do
 		echo "Gateways Network $i"
-		docker network create --ipv6 --subnet=aaaa::1/64 Gateways_Network_$i		
+		docker network create --ipv6 --subnet=bbbb::$i/64 Gateways_Network_$i		
 		echo
 		echo "Gateways Router $i"   		
 		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --sysctl net.ipv6.conf.all.disable_ipv6=0 --net=Gateways_Network_$i --name Gateways_Router_$i $GATEWAYROUTERIMAGE	
@@ -225,7 +225,7 @@ star_topology()
 	for i in $(seq 1 $CLIENTROUTERS)
 	do
 		echo "Clients Network $i"
-		docker network create --ipv6 --subnet=aaaa::1/64 Clients_Network_$i		
+		docker network create --ipv6 --subnet=cccc::$i/64 Clients_Network_$i		
 		echo
 		echo "Clients Router $i"	
 		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --sysctl net.ipv6.conf.all.disable_ipv6=0 --net=Clients_Network_$i --name Clients_Router_$i $CLIENTROUTERIMAGE		
