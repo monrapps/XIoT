@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# Start System log
+service rsyslog start
+
+# Wait 1 delay time for xia-server initialize 
+sleep $DELAY
+
+# Copy NRS DAG from the Data Volume
+cp /xiotvolume/resolv.conf /xia-core/etc/resolv.conf
+
+# Start XIA service as Router
+cd xia-core/bin
+./xianet -r start
+
+# Keep Alive
+tail -f /var/log/dmesg

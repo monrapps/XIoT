@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# get XIA source
+cd /
+git clone -b xia-v2 --single-branch https://github.com/XIA-Project/xia-core.git
+chmod -R 777 xia-core
+cd xia-core
+
+# Build XIA
+./configure
+make

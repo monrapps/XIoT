@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# Start System log
+service rsyslog start
+
+# Wait 3 delay times for xia-server, xia-routers and xia-gateway initialize 
+sleep $(($DELAY * 3))
+
+# Start XIA service as Host
+cd xia-core/bin
+./xianet -t start
+
+# Wait 6 delay times for Gateways + cooja + tunslip start
+sleep $(($DELAY * 6))
+
+# Start Client application passing all parameters
+cd ../applications/example
+./xia-echo-tester $CLIENT $CLIENTROUTER $MOTES $GATEWAYS $GATEWAYROUTERS $DATASIZE $REQUESTS
