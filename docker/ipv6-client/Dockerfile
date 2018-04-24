@@ -1,7 +1,7 @@
-FROM xia-base
+FROM ipv6-base
 
 # Copy client application
-COPY xia-echo-tester ./xia-core/applications/example/xia-echo-tester
+#COPY xia-echo-tester ./xia-core/applications/example/xia-echo-tester
 
 # Copy initialization Script
 COPY init ./init

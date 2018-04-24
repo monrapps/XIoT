@@ -27,8 +27,3 @@ RUN apt-get install -y iputils-ping
 RUN apt-get install -y traceroute
 RUN apt-get install -y iptables
 
-# Copy XIA instalation Script
-COPY install-xia ./install-xia
-
-# Run XIA instalation Script
-RUN /install-xia

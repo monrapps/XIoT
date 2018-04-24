@@ -1,20 +1,11 @@
 #!/bin/sh
 
-# Start System log
-service rsyslog start
-
-# Wait 1 delay time for xia-server initialize 
-sleep $DELAY
-
-# Copy NRS DAG from the Data Volume
-cp /xiotvolume/resolv.conf /xia-core/etc/resolv.conf
-
-# Start XIA service as Router
-cd xia-core/bin
-./xianet -r start
-
+# Configure Routes
 ip -6 route del default
-ip -6 route add default via bbbb::2
+for i in $(seq 1 $GATEWAYROUTERS)
+do
+	ip -6 route add dddd:$i::/64 via aaaa:$i::2
+done
 
 # Keep Alive
 tail -f /var/log/dmesg

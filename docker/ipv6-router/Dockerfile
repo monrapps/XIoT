@@ -1,4 +1,4 @@
-FROM xia-base
+FROM ipv6-base
 
 # Copy initialization Script
 COPY init ./init

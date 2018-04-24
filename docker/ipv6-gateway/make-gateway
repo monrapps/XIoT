@@ -20,6 +20,3 @@ make TARGET=sky
 cd /contiki/examples/cc2538dk/udp-ipv6-echo-server
 make TARGET=sky
 
-# Build xia examples + Gateway service
-cd /xia-core/applications/example
-make 
