@@ -10,9 +10,15 @@ sleep $(($DELAY * 3))
 cd xia-core/bin
 ./xianet -t start
 
+ip -6 route del default
+ip -6 route add default via dddd::$CLIENTROUTER:2
+
 # Wait 6 delay times for Gateways + cooja + tunslip start
 sleep $(($DELAY * 6))
 
 # Start Client application passing all parameters
 cd ../applications/example
 ./xia-echo-tester $CLIENT $CLIENTROUTER $MOTES $GATEWAYS $GATEWAYROUTERS $DATASIZE $REQUESTS
+
+# Keep Alive
+tail -f /var/log/dmesg

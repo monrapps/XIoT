@@ -13,5 +13,8 @@ cp /xiotvolume/resolv.conf /xia-core/etc/resolv.conf
 cd xia-core/bin
 ./xianet -r start
 
+ip -6 route del default
+ip -6 route add default via bbbb::2
+
 # Keep Alive
 tail -f /var/log/dmesg

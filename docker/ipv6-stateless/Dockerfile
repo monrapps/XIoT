@@ -32,3 +32,7 @@ COPY install-xia ./install-xia
 
 # Run XIA instalation Script
 RUN /install-xia
+
+RUN apt-get install -y radvd
+COPY radvd.conf ./etc/radvd.conf
+

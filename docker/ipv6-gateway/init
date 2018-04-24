@@ -4,11 +4,14 @@
 service rsyslog start
 
 # Wait 2 delay times for xia-server and xia-routers initialize
-sleep $(($DELAY * 2))
+#sleep $(($DELAY * 2))
 
 # Start XIA service as Host
-cd xia-core/bin
-./xianet -t start 
+#cd xia-core/bin
+#./xianet -t start 
+
+#ip -6 route del default
+#ip -6 route add default via aaaa::$GATEWAYROUTER:2
 
 # Start cooja loading the cooja project
 java -mx512m -jar /contiki/tools/cooja/dist/cooja.jar -nogui="/xia-ipv6-rpl-udp.csc" -contiki="/contiki" > /dev/null &
@@ -17,26 +20,26 @@ java -mx512m -jar /contiki/tools/cooja/dist/cooja.jar -nogui="/xia-ipv6-rpl-udp.
 sleep $(($DELAY * 3))
 
 # Start tunslip6
-/contiki/tools/tunslip6 -a 127.0.0.1 aaaa::1/64 &
+/contiki/tools/tunslip6 -a 127.0.0.1 dddd:1::1/64 &
 
 # Wait 2 delay times for tunslip6 initialize
 sleep $(($DELAY * 2))
 
 # Copy IP addreses from the Border Router
-cd /xia-core/applications/example
-wget http://[aaaa::212:7401:1:101]/
+#cd /xia-core/applications/example
+wget http://[dddd:1::212:7401:1:101]/
 
 # Run workaround to get localdag
-./getlocaldag
+#./getlocaldag
 
 # Get count of motes on Cooja network
-MOTES=$(grep -c aaaa:: index.html)
+#MOTES=$(grep -c aaaa:: index.html)
 
 # Start a Gateway Service for each mote
-for i in $(seq 1 $MOTES)
-do
-	./xia-udp-gateway $i $GATEWAY $GATEWAYROUTER $TIMEOUT &
-done
+#for i in $(seq 1 $MOTES)
+#do
+#	./xia-udp-gateway $i $GATEWAY $GATEWAYROUTER $TIMEOUT &
+#done
 
 # Keep Alive
 tail -f /var/log/dmesg
