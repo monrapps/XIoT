@@ -1,3 +1,5 @@
+#!/bin/sh
+
 ./create_networks
 
 ./start_gatewayrouter
@@ -5,4 +7,4 @@ docker network connect routers gatewayrouter
 ./start_clientrouter
 docker network connect routers clientrouter
 ./start_gateway
-
+./start_client

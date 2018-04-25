@@ -1,1 +1,3 @@
-docker run -it --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --sysctl net.ipv6.conf.all.forwarding=1 --net client_1 -e DELAY=10 -e CLIENTROUTER=1 ipv6-base
+#!/bin/sh
+
+docker run -it --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --sysctl net.ipv6.conf.all.forwarding=1 --net client_1 -v xiotvolume:/xiotvolume -e DELAY=10 -e CLIENT=1 -e CLIENTROUTER=1 -e MOTES=1 -e GATEWAYS=1 -e GATEWAYROUTERS=1 -e DATASIZE=8 -e REQUESTS=100 ipv6-client

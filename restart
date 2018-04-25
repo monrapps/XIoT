@@ -1,0 +1,5 @@
+#!/bin/sh
+
+./xiot stop
+./xiot -a ipv6 build
+./start
