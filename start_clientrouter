@@ -1,1 +1,1 @@
-docker run -it --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --sysctl net.ipv6.conf.all.forwarding=1 --net routers -e DELAY=10 -e GATEWAYROUTERS=1 -e GT="gt" --name clientrouter ipv6-router
+docker run -itd --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --sysctl net.ipv6.conf.all.forwarding=1 --net client_1 -e DELAY=10 -e GATEWAYROUTERS=1 -e GT="gt" --name clientrouter ipv6-router
