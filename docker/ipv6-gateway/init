@@ -9,5 +9,9 @@ sleep $(($DELAY * 3))
 # Start tunslip6
 /contiki/tools/tunslip6 -a 127.0.0.1 dddd:1::1/64 &
 
+ip -6 route del default
+ip -6 route add default via aaaa:1::2
+ip -6 route
+
 # Keep Alive
 tail -f /var/log/dmesg

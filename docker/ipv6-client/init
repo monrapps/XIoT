@@ -1,14 +1,16 @@
 #!/bin/sh
 
+sleep $(($DELAY * 3))
+
 ip -6 route del default
-ip -6 route add default via cccc:$CLIENTROUTER::2
+ip -6 route add default via cccc:1::2
 
 # Wait 6 delay times for Gateways + cooja + tunslip start
-sleep $(($DELAY * 6))
+#sleep $(($DELAY * 6))
 
 # Start Client application passing all parameters
 #cd ../applications/example
 #./xia-echo-tester $CLIENT $CLIENTROUTER $MOTES $GATEWAYS $GATEWAYROUTERS $DATASIZE $REQUESTS
 
 # Keep Alive
-tail -f /var/log/dmesg
+#tail -f /var/log/dmesg
