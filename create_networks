@@ -2,7 +2,7 @@
 
 docker network create --ipv6 --subnet=bbbb::/64 routers
 docker network create --ipv6 --subnet=cccc:1::/64 client_1
-docker network create --ipv6 --subnet=aaaa:1::/64 gateway_1
+docker network create --ipv6 --subnet=dddd:1::/64 gateway_1
 
 sysctl net.ipv6.conf.all.forwarding=0
 

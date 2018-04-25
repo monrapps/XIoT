@@ -4,26 +4,24 @@ sleep $(($DELAY * 3))
 
 # Configure Routes
 ip -6 route del default
-if [ 'gt' != $GT ]
+if [ 'gateways' = $ROUTE ]
   then
 	for i in $(seq 1 $GATEWAYROUTERS)
 	do
-		ip -6 route add dddd:1::/64 via aaaa:1::3	
-		ip -6 route add cccc:1::/64 via bbbb::3
+		ip -6 route add aaaa:$i::/64 via dddd:$i::3	
+		ip -6 route add cccc:$i::/64 via bbbb::3
 	done
 	echo gateway
 fi
 
-if [ 'gt' = $GT ]
+if [ 'clients' = $ROUTE ]
   then
   	for i in $(seq 1 $GATEWAYROUTERS)
 	do
-		ip -6 route add dddd:1::/64 via bbbb::2
+		ip -6 route add aaaa:$i::/64 via bbbb::2
 	done	
 	echo client
 fi
-
-ip -6 route
 
 # Keep Alive
 tail -f /var/log/dmesg

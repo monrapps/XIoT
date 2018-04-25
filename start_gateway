@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker run -itd --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --sysctl net.ipv6.conf.all.forwarding=1 --net gateway_1 -e DELAY=10 ipv6-gateway
+docker run -itd --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --sysctl net.ipv6.conf.all.forwarding=1 --net gateway_1 -e DELAY=10 -e GATEWAYROUTER=1 ipv6-gateway

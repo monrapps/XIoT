@@ -215,11 +215,11 @@ star_topology()
 	for i in $(seq 1 $GATEWAYROUTERS)
 	do
 		echo "Gateways Network $i"
-		docker network create --ipv6 --subnet=dddd::$i:1/64 Gateways_Network_$i
+		docker network create --ipv6 --subnet=dddd:$i::/64 Gateways_Network_$i
 		sysctl net.ipv6.conf.all.forwarding=0
 		echo
 		echo "Gateways Router $i"   		
-		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --sysctl net.ipv6.conf.all.forwarding=1 --net=Gateways_Network_$i --name Gateways_Router_$i $GATEWAYROUTERIMAGE	
+		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY -e GATEWAYROUTERS=$GATEWAYROUTERS -e ROUTE=gateways --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --sysctl net.ipv6.conf.all.forwarding=1 --net=Gateways_Network_$i --name Gateways_Router_$i $GATEWAYROUTERIMAGE	
 		docker network connect Server_Network Gateways_Router_$i
 		echo
 	done
@@ -227,11 +227,11 @@ star_topology()
 	for i in $(seq 1 $CLIENTROUTERS)
 	do
 		echo "Clients Network $i"
-		docker network create --ipv6 --subnet=cccc::$i:1/64 Clients_Network_$i
+		docker network create --ipv6 --subnet=cccc:$i::/64 Clients_Network_$i
 		sysctl net.ipv6.conf.all.forwarding=0		
 		echo
 		echo "Clients Router $i"	
-		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --sysctl net.ipv6.conf.all.forwarding=1 --net=Clients_Network_$i --name Clients_Router_$i $CLIENTROUTERIMAGE		
+		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY -e GATEWAYROUTERS=$GATEWAYROUTERS -e ROUTE=clients --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --sysctl net.ipv6.conf.all.forwarding=1 --net=Clients_Network_$i --name Clients_Router_$i $CLIENTROUTERIMAGE		
 			docker network connect Server_Network Clients_Router_$i	
 		echo
 	done

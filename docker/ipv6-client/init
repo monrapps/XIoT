@@ -1,14 +1,11 @@
 #!/bin/sh
 
-sleep $(($DELAY * 3))
+# Wait 6 delay times for Gateways + cooja + tunslip start
+sleep $(($DELAY * 6))
 
 ip -6 route del default
 ip -6 route add default via cccc:$CLIENTROUTER::2
 
-# Wait 6 delay times for Gateways + cooja + tunslip start
-sleep $(($DELAY * 6))
-
 # Start Client application passing all parameters
 ./ipv6-echo-tester $CLIENT $CLIENTROUTER $MOTES $GATEWAYS $GATEWAYROUTERS $DATASIZE $REQUESTS
-#ping6 dddd:1::212:7402:2:202
 

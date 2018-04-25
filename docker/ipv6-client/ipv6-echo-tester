@@ -49,11 +49,9 @@ def echotester():
 			text = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(DATASIZE))
 			latency = time.time() * 1000	
 			
-			UDP_IP = "dddd:1::212:7402:2:202"
-			print "udp-data"
-			udpsock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM) # UDP
+			UDP_IP = "aaaa:1::212:7402:2:202"
 			
-			print "udp-data2"
+			udpsock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM) # UDP
    			udpsock.settimeout(TIMEOUT)
    			print REQ, " : sending" , len(text), "bytes to", UDP_IP,"\n",HOSTNAME,":", text
     			udpsock.sendto(text, (UDP_IP, UDP_PORT))
