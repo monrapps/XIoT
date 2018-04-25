@@ -209,7 +209,7 @@ star_topology()
 	echo
 	
 	echo "Server"
-	docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --net=Server_Network --name Server $SERVERIMAGE
+	docker run -v $DATAVOLUME:/$DATAVOLUME -itd --privileged -e DELAY=$DELAY --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --net=Server_Network --name Server $SERVERIMAGE
 	echo
 	
 	for i in $(seq 1 $GATEWAYROUTERS)
@@ -253,7 +253,7 @@ star_topology()
 		do
 			z="$(( $CLIENTS * ( $i - 1 ) + $j ))"		
 			echo "Client $z"
-			docker run -itd -v $DATAVOLUME:/$DATAVOLUME --net=Clients_Network_$i -e CLIENT=$j -e CLIENTROUTER=$i -e DELAY=$DELAY -e MOTES=$MOTES -e GATEWAYS=$GATEWAYS -e GATEWAYROUTERS=$GATEWAYROUTERS -e DATASIZE=$DATASIZE -e REQUESTS=$REQUESTS --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --name Client_$z $CLIENTIMAGE
+			docker run -itd -v $DATAVOLUME:/$DATAVOLUME --net=Clients_Network_$i -e CLIENT=$j -e CLIENTROUTER=$i -e DELAY=$DELAY -e MOTES=$MOTES -e GATEWAYS=$GATEWAYS -e GATEWAYROUTERS=$GATEWAYROUTERS -e DATASIZE=$DATASIZE -e REQUESTS=$REQUESTS -e TIMEOUT=$TIMEOUT --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --name Client_$z $CLIENTIMAGE
 			echo
 		done
 	done

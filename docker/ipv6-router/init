@@ -9,7 +9,7 @@ if [ 'gateways' = $ROUTE ]
 	for i in $(seq 1 $GATEWAYROUTERS)
 	do
 		ip -6 route add aaaa:$i::/64 via dddd:$i::3	
-		ip -6 route add cccc:$i::/64 via bbbb::3
+		ip -6 route add cccc:$i::/64 via bbbb::4
 	done
 	echo gateway
 fi
@@ -18,7 +18,7 @@ if [ 'clients' = $ROUTE ]
   then
   	for i in $(seq 1 $GATEWAYROUTERS)
 	do
-		ip -6 route add aaaa:$i::/64 via bbbb::2
+		ip -6 route add aaaa:$i::/64 via bbbb::3
 	done	
 	echo client
 fi

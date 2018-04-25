@@ -15,14 +15,14 @@ TIMEOUT = 1000
 UDP_PORT = 3000
 
 def main():
-	if len(sys.argv) != 8:
+	if len(sys.argv) != 9:
 		usage()
 	else:
 		echotester()
 
 def usage():
     sys.stdout = sys.stderr
-    print 'Usage: ipv6-echo-tester client clientrouter motes gateways gatewayrouters datasize requests'
+    print 'Usage: ipv6-echo-tester client clientrouter motes gateways gatewayrouters datasize requests timeout'
     sys.exit(2) 
 
 def echotester():
