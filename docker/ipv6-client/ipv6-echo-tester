@@ -7,6 +7,7 @@ import time
 import csv
 import string
 import random
+from binascii import hexlify
 
 import socket
 
@@ -40,11 +41,11 @@ def echotester():
 			REQ = REQ + 1
 			DST_GATEWAYROUTER = str(random.randint(1,GATEWAYROUTERS))
 			DST_GATEWAY = str(random.randint(1,GATEWAYS))
-			DST_MOTE = str(random.randint(2,MOTES))
-			
+			DST_MOTE = str('{:x}'.format(random.randint(2, MOTES + 1)))
+				
 			HOSTNAME = DST_MOTE+"."+DST_GATEWAY+"."+DST_GATEWAYROUTER
-			
-			print HOSTNAME
+
+			print HOSTNAME		
 			
 			text = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(DATASIZE))
 			latency = time.time() * 1000	
