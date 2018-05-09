@@ -35,7 +35,7 @@ where:
   build   - build images
   print   - prints configuration
   single  - start in a single network (no routers)
-  stats   - start formated docker stats
+  stats   - show formated docker stats
 
 EOF
 	exit 0
@@ -219,7 +219,7 @@ star_topology()
 		sysctl net.ipv6.conf.all.forwarding=0
 		echo
 		echo "Gateways Router $i"   		
-		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY -e GATEWAYROUTERS=$GATEWAYROUTERS -e ROUTE=gateways --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --sysctl net.ipv6.conf.all.forwarding=1 --net=Gateways_Network_$i --name Gateways_Router_$i $GATEWAYROUTERIMAGE	
+		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY -e GATEWAYROUTERS=$GATEWAYROUTERS -e CLIENTROUTERS=$CLIENTROUTERS -e GATEWAYS=$GATEWAYS -e GATEWAYSROUTER=$i -e ROUTE=gateways --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --sysctl net.ipv6.conf.all.forwarding=1 --net=Gateways_Network_$i --name Gateways_Router_$i $GATEWAYROUTERIMAGE	
 		docker network connect Server_Network Gateways_Router_$i
 		echo
 	done
@@ -231,7 +231,7 @@ star_topology()
 		sysctl net.ipv6.conf.all.forwarding=0		
 		echo
 		echo "Clients Router $i"	
-		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY -e GATEWAYROUTERS=$GATEWAYROUTERS -e ROUTE=clients --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --sysctl net.ipv6.conf.all.forwarding=1 --net=Clients_Network_$i --name Clients_Router_$i $CLIENTROUTERIMAGE		
+		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY -e GATEWAYS=$GATEWAYS -e GATEWAYROUTERS=$GATEWAYROUTERS -e CLIENTROUTERS=$CLIENTROUTERS -e ROUTE=clients --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --sysctl net.ipv6.conf.all.forwarding=1 --net=Clients_Network_$i --name Clients_Router_$i $CLIENTROUTERIMAGE		
 			docker network connect Server_Network Clients_Router_$i	
 		echo
 	done

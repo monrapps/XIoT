@@ -7,10 +7,15 @@ java -mx512m -jar /contiki/tools/cooja/dist/cooja.jar -nogui="/xia-ipv6-rpl-udp.
 sleep $(($DELAY * 3))
 
 # Start tunslip6
-/contiki/tools/tunslip6 -a 127.0.0.1 aaaa:$GATEWAYROUTER::1/64 &
+/contiki/tools/tunslip6 -a 127.0.0.1 aaaa:$GATEWAYROUTER:$GATEWAY::1/64 &
 
+sleep $(($DELAY * 1))
+
+echo
 ip -6 route del default
 ip -6 route add default via dddd:$GATEWAYROUTER::2
+ip -6 route
+echo
 
 # Keep Alive
 tail -f /var/log/dmesg
