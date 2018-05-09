@@ -7,7 +7,6 @@ import time
 import csv
 import string
 import random
-from binascii import hexlify
 
 import socket
 
@@ -58,28 +57,10 @@ def echotester():
     			udpsock.sendto(text, (UDP_IP, UDP_PORT))
     			print "waiting for udp-data"
     			latency = time.time() * 1000
-    			try:			
-        			data, addr = udpsock.recvfrom(120)	
-        			latency = (time.time() * 1000) - latency	
-				print "received", len(data), "bytes from", addr, ":", data     
-				print "latency: %d ms" % latency
-				fields = [MOTE,GATEWAY,GATEWAYROUTER,REQ,"%d" % latency,"success"]
-				with open(r'/xiotvolume/gatewayslog.csv', 'a') as f:
-    					writer = csv.writer(f, delimiter=';')
-    					writer.writerow(fields)
-			except socket.timeout:	
-				data = "udp-timeout"
-				latency = (time.time() * 1000) - latency
-				print data
-				fields = [MOTE,GATEWAY,GATEWAYROUTER,REQ,"%d" % latency,"udp-timeout"]
-				with open(r'/xiotvolume/gatewayslog.csv', 'a') as f:
-    					writer = csv.writer(f, delimiter=';')
-    					writer.writerow(fields)	
-							
-		
-			latency = (time.time() * 1000) - latency
-	
-			print "received", len(data), "bytes from", UDP_IP,":", data   			
+    				
+        		data, addr = udpsock.recvfrom(120)	
+        		latency = (time.time() * 1000) - latency	
+			print "received", len(data), "bytes from", addr, ":", data     
 			print "latency: %d ms" % latency
 		
 			if data == text:
@@ -94,9 +75,11 @@ def echotester():
 			with open(r'/xiotvolume/clientslog.csv', 'a') as f:
     				writer = csv.writer(f, delimiter=';')
     				writer.writerow(fields)
-		except:
-			print "Xsocket error"
-			fields = [SRC_CLIENT,SRC_CLIENTROUTER,'','','','','',"Xsocket error"]
+		except socket.timeout:	
+			latency = (time.time() * 1000) - latency
+			print "udp-timeout"
+			result = "udp error"
+			fields = [SRC_CLIENT,SRC_CLIENTROUTER,DST_MOTE,DST_GATEWAY,DST_GATEWAYROUTER,REQ,"%d" % latency,result]
 			with open(r'/xiotvolume/clientslog.csv', 'a') as f:
     				writer = csv.writer(f, delimiter=';')
     				writer.writerow(fields)
