@@ -1,10 +1,10 @@
 #!/bin/sh
 
-sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 1 -C 1 start
-sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 1 -C 2 start
-sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 1 -C 3 start
-sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 1 -C 4 start
-sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 1 -C 5 start
+#sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 1 -C 1 start
+#sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 1 -C 2 start
+#sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 1 -C 3 start
+#sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 1 -C 4 start
+#sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 1 -C 5 start
 sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 1 -C 7 start
 sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 1 -C 8 start
 
