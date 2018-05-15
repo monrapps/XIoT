@@ -26,4 +26,5 @@ RUN apt-get install -y net-tools
 RUN apt-get install -y iputils-ping
 RUN apt-get install -y traceroute
 RUN apt-get install -y iptables
+RUN apt-get install -y bc
 

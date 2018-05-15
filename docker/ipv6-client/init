@@ -4,7 +4,7 @@
 sleep $(($DELAY * 6))
 
 ip -6 route del default
-ip -6 route add default via cccc:$CLIENTROUTER::2
+ip -6 route add default via cccc:`echo "obase=16;$CLIENTROUTER"|bc`::2
 
 # Start Client application passing all parameters
 ./ipv6-echo-tester $CLIENT $CLIENTROUTER $MOTES $GATEWAYS $GATEWAYROUTERS $DATASIZE $REQUESTS $TIMEOUT
