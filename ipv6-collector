@@ -1,0 +1,47 @@
+#!/usr/bin/env python
+from os import listdir
+from os.path import isdir, join
+
+#DIR="/Users/monra/Desktop/Z68X-UD3-B3"
+#DIR = "/Users/monra/Desktop/MonRanaonda"
+DIR="/mnt/d/logs/Z68X-UD4-B3"
+
+print "Length, Gateways, GatewayRouters, Clients, ClientRouters, Latency Mean, Error, CPU, CPU End"
+
+subdirs=[f for f in listdir(DIR)]
+subdirs=[f for f in subdirs if f[0] == 'i']
+for s in subdirs:
+    l = s.split(" ")
+	
+    with open(join(join(DIR, s), "clientslog.csv")) as f:
+        lines = f.readlines()
+
+    tmean = 0
+    okcnt = 0
+    tcnt = 0
+    ecnt = 0
+
+    for li in lines:
+        data = li.split(";")
+        tcnt = tcnt + 1
+        if data[7][0] != 's':
+            ecnt = ecnt + 1
+        else:
+            tmean = tmean + int(data[6])
+            okcnt = okcnt + 1
+    f.close()
+
+    with open(join(join(DIR, s), "running-stats.csv")) as f:
+        lines = f.readlines()
+
+    cpu_tmean = 0
+    cpu_tcnt = 0
+    cpu_end = int(lines[-1].split(";")[-2])
+            
+    for li in lines:
+        data = li.split(";")
+        cpu_tcnt = cpu_tcnt + 1
+        cpu_tmean = cpu_tmean + int(data[-1].split(".")[0])
+    f.close()
+	
+    print "%s, %s, %s, %s, %s, %d, %d, %d, %d" % (l[6],l[10],l[12],l[14],l[16], tmean/okcnt, ecnt*100/tcnt, cpu_tmean/cpu_tcnt, cpu_end)
