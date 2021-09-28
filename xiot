@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # Copyright 2017 MonRá
+# Modified by Antonio M. Alberti 2021
 #
 
 XIOTDIR="$(cd "$(dirname "$0")" && pwd)"
@@ -12,7 +13,7 @@ help()
 
 Start or stop the XIoT network testing services.
 
-usage: $NAME [-cgmCGlrtvd] [-c <clients_per_router>] [-g <gateways_per_router>] [-m <motes_per_gateway>]
+usage: $NAME [-a] [-c <clients_per_router>] [-g <gateways_per_router>] [-m <motes_per_gateway>]
              [-C <client_routers>] [-G <gateway_routers>] [-r <resquests>] [-l <data_size>]
              [-t <timeout>] [-d <delay>] [-v <data_volume>] [start|stop|kill|prune|single|build|print]
 where:
@@ -27,7 +28,7 @@ where:
   -v Data Volume # Folder name
   -d Delay (s) # Base delay variable for initializations
   -a Internet Architecture
-  
+
   start   - starts the networks and containers
   stop    - stops all containers
   kill    - kills all containers
@@ -35,7 +36,7 @@ where:
   build   - build images
   print   - prints configuration
   single  - start in a single network (no routers)
-  stats   - start formated docker stats
+  stats   - show formated docker stats
 
 EOF
 	exit 0
@@ -48,19 +49,19 @@ setup()
 	GATEWAYS=1
 	GATEWAYROUTERS=1
 	MOTES=9
-	TIMEOUT=1
+	TIMEOUT=3
 	DATASIZE=8
 	REQUESTS=100
 	DELAY=10
-	
+
 	FIA=xia
-	
+
 	DATAVOLUME=xiotvolume
 
 	local OPTARG=$2
 
 	while getopts "c:g:C:G:m:d:t:r:v:l:a:" opt; do
-		case $opt in			
+		case $opt in
 			c)
 				CLIENTS=$OPTARG
 				;;
@@ -93,7 +94,7 @@ setup()
 				;;
 			a)
 				FIA=$OPTARG
-				;;			
+				;;
 			h)
 				help
 				;;
@@ -103,7 +104,7 @@ setup()
 				;;
 		esac
 	done
-	
+
 	CLIENTIMAGE=$FIA-client
 	GATEWAYIMAGE=$FIA-gateway
 	CLIENTROUTERIMAGE=$FIA-router
@@ -113,6 +114,12 @@ setup()
 
 print_config()
 {
+
+	TotalClients="$(( $CLIENTS * $CLIENTROUTERS ))"
+	TotalGateways="$(( $GATEWAYS * $GATEWAYROUTERS ))"
+	Total="$(( $CLIENTS * $CLIENTROUTERS  +  $GATEWAYS * $GATEWAYROUTERS + 1 + $CLIENTROUTERS + $GATEWAYROUTERS ))"
+
+
 	echo
 	echo "Config:"
 	echo
@@ -126,8 +133,12 @@ print_config()
 	echo "Datasize: $DATASIZE bytes"
 	echo "Delay: $DELAY s"
 	echo "UDP Timeout: $TIMEOUT s"
+	echo "Total number of Clients is: $TotalClients"
+	echo "Total number of Gateways is: $TotalGateways"
+	echo "Total number of containers is: $Total"
+	echo "Results at dir: $XIOTDIR/logs/$HOSTNAME/$FIA d $DELAY r $REQUESTS l $DATASIZE m $MOTES g $GATEWAYS G $GATEWAYROUTERS c $CLIENTS C $CLIENTROUTERS"
 	echo
-	echo "Future Internet Architecture: $FIA"
+	echo "Internet Architecture: $FIA"
 	echo
 	echo "Server Image: $SERVERIMAGE"
 	echo "Gateway Router Image: $GATEWAYROUTERIMAGE"
@@ -136,7 +147,7 @@ print_config()
 	echo "Client Image: $CLIENTIMAGE"
 	echo
 	echo "Data Volume: $DATAVOLUME"
-	echo
+	echo "Host Name: $HOSTNAME"
 }
 
 stop_all()
@@ -179,11 +190,11 @@ build_all()
 	cd $SERVERIMAGE
 	docker build -t $SERVERIMAGE .
 	cd ..
-	
+
 	cd $GATEWAYROUTERIMAGE
 	docker build -t $GATEWAYROUTERIMAGE .
 	cd ..
-	
+
 	cd $CLIENTROUTERIMAGE
 	docker build -t $CLIENTROUTERIMAGE .
 	cd ..
@@ -191,86 +202,89 @@ build_all()
 	cd $GATEWAYIMAGE
 	docker build -t $GATEWAYIMAGE .
 	cd ..
-	
+
 	cd $CLIENTIMAGE
 	docker build -t $CLIENTIMAGE .
 	cd ..
 }
 
 star_topology()
-{	
+{
 	echo "Data Volume"
 	docker volume create $DATAVOLUME
-	echo	
-	
+	echo
+
 	echo "Server Network"
-	docker network create Server_Network	
+	docker network create --ipv6 --subnet=bbbb::/64 Server_Network
+	sysctl net.ipv6.conf.all.forwarding=0
 	echo
-	
+
 	echo "Server"
-	docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --net=Server_Network --name Server $SERVERIMAGE	
+	docker run -v $DATAVOLUME:/$DATAVOLUME -itd --privileged -e DELAY=$DELAY --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --net=Server_Network --name Server $SERVERIMAGE
 	echo
-	
+
 	for i in $(seq 1 $GATEWAYROUTERS)
 	do
 		echo "Gateways Network $i"
-		docker network create Gateways_Network_$i		
+		docker network create --ipv6 --subnet=dddd:$i::/64 Gateways_Network_$i
+		sysctl net.ipv6.conf.all.forwarding=0
 		echo
-		echo "Gateways Router $i"   		
-		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --net=Gateways_Network_$i --name Gateways_Router_$i $GATEWAYROUTERIMAGE	
+		echo "Gateways Router $i"
+		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY -e GATEWAYROUTERS=$GATEWAYROUTERS -e CLIENTROUTERS=$CLIENTROUTERS -e GATEWAYS=$GATEWAYS -e GATEWAYSROUTER=$i -e ROUTE=gateways --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --sysctl net.ipv6.conf.all.forwarding=1 --net=Gateways_Network_$i --name Gateways_Router_$i $GATEWAYROUTERIMAGE
 		docker network connect Server_Network Gateways_Router_$i
 		echo
 	done
-	
+
 	for i in $(seq 1 $CLIENTROUTERS)
 	do
 		echo "Clients Network $i"
-		docker network create Clients_Network_$i		
+		docker network create --ipv6 --subnet=cccc:$i::/64 Clients_Network_$i
+		sysctl net.ipv6.conf.all.forwarding=0
 		echo
-		echo "Clients Router $i"	
-		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY --net=Clients_Network_$i --name Clients_Router_$i $CLIENTROUTERIMAGE		
-			docker network connect Server_Network Clients_Router_$i	
+		echo "Clients Router $i"
+		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e DELAY=$DELAY -e GATEWAYS=$GATEWAYS -e GATEWAYROUTERS=$GATEWAYROUTERS -e CLIENTROUTERS=$CLIENTROUTERS -e ROUTE=clients --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --sysctl net.ipv6.conf.all.forwarding=1 --net=Clients_Network_$i --name Clients_Router_$i $CLIENTROUTERIMAGE
+			docker network connect Server_Network Clients_Router_$i
 		echo
 	done
-		
+
 	for i in $(seq 1 $GATEWAYROUTERS)
 	do
 		for j in $(seq 1 $GATEWAYS)
-		do      
-	   		z="$(( $GATEWAYS * ( $i - 1 ) + $j ))"		
-	   		echo "Gateway $z"					
-	   		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e TIMEOUT=$TIMEOUT -e DELAY=$DELAY -e MOTES=$MOTES -e GATEWAYROUTER=$i -e GATEWAY=$j --sysctl net.ipv6.conf.all.disable_ipv6=0 --privileged --net=Gateways_Network_$i --name Gateway_$z $GATEWAYIMAGE
+		do
+	   		z="$(( $GATEWAYS * ( $i - 1 ) + $j ))"
+	   		echo "Gateway $z"
+	   		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e TIMEOUT=$TIMEOUT -e DELAY=$DELAY -e MOTES=$MOTES -e GATEWAYROUTER=$i -e GATEWAY=$j --sysctl net.ipv6.conf.all.disable_ipv6=0 --sysctl net.ipv6.conf.all.forwarding=1 --privileged --net=Gateways_Network_$i --name Gateway_$z $GATEWAYIMAGE
 	   		echo
 	   	done
 	done
-	
+
 	for i in $(seq 1 $CLIENTROUTERS)
-	do	
+	do
 		for j in $(seq 1 $CLIENTS)
 		do
-			z="$(( $CLIENTS * ( $i - 1 ) + $j ))"		
+			z="$(( $CLIENTS * ( $i - 1 ) + $j ))"
 			echo "Client $z"
-			docker run -itd -v $DATAVOLUME:/$DATAVOLUME --net=Clients_Network_$i -e CLIENT=$j -e CLIENTROUTER=$i -e DELAY=$DELAY -e MOTES=$MOTES -e GATEWAYS=$GATEWAYS -e GATEWAYROUTERS=$GATEWAYROUTERS -e DATASIZE=$DATASIZE -e REQUESTS=$REQUESTS --name Client_$z $CLIENTIMAGE
+			docker run -itd -v $DATAVOLUME:/$DATAVOLUME --net=Clients_Network_$i -e CLIENT=$j -e CLIENTROUTER=$i -e DELAY=$DELAY -e MOTES=$MOTES -e GATEWAYS=$GATEWAYS -e GATEWAYROUTERS=$GATEWAYROUTERS -e DATASIZE=$DATASIZE -e REQUESTS=$REQUESTS -e TIMEOUT=$TIMEOUT --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0 --name Client_$z $CLIENTIMAGE
 			echo
 		done
 	done
-}	
+}
 
 single_network()
 {
 	echo "Starting Server"
-	docker run -itd xia-server	
+	docker run -itd xia-server
 	echo
 	for i in `seq 1 $GATEWAYS`;
 	do
 		echo "Starting Gateway"
-		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e TIMEOUT=$TIMEOUT -e MOTES=$MOTES -e GATEWAYROUTERS=$GATEWAYROUTERS -e DELAY=$DELAY -e GATEWAYROUTER=1 -e GATEWAY=$i --sysctl net.ipv6.conf.all.disable_ipv6=0 --privileged --name Gateway_$i $GATEWAYIMAGE
+		docker run -v $DATAVOLUME:/$DATAVOLUME -itd -e TIMEOUT=$TIMEOUT -e DELAY=$DELAY -e MOTES=$MOTES -e GATEWAYROUTER=1 -e GATEWAY=$i --sysctl net.ipv6.conf.all.disable_ipv6=0 --sysctl net.ipv6.conf.all.forwarding=1 --privileged --name Gateway_$i $GATEWAYIMAGE
 		echo
 	done
 	for i in `seq 1 $CLIENTS`;
 	do
 		echo "Starting Client"
-		docker run -itd -v $DATAVOLUME:/$DATAVOLUME -e DELAY=$DELAY -e MOTES=$MOTES -e GATEWAYS=$GATEWAYS -e GATEWAYROUTERS=$GATEWAYROUTERS -e DATASIZE=$DATASIZE -e REQUESTS=$REQUESTS --name Client_$i $CLIENTIMAGE
+		docker run -itd -v $DATAVOLUME:/$DATAVOLUME -e CLIENT=$i -e CLIENTROUTER=1 -e DELAY=$DELAY -e MOTES=$MOTES -e GATEWAYS=$GATEWAYS -e GATEWAYROUTERS=1 -e DATASIZE=$DATASIZE -e REQUESTS=$REQUESTS --sysctl net.ipv6.conf.all.disable_ipv6=0 --name Client_$i $CLIENTIMAGE
 		echo
 	done
 }
@@ -281,29 +295,26 @@ stats()
 }
 
 collect()
-{	
+{
 	START_TIME=$SECONDS
-	mkdir -p "$XIOTDIR/logs/$HOSTNAME/d $DELAY r $REQUESTS l $DATASIZE g $GATEWAYS G $GATEWAYROUTERS c $CLIENTS C $CLIENTROUTERS"
+	mkdir -p "$XIOTDIR/logs/$HOSTNAME/$FIA d $DELAY r $REQUESTS l $DATASIZE m $MOTES g $GATEWAYS G $GATEWAYROUTERS c $CLIENTS C $CLIENTROUTERS"
 	while [ $(docker stats --format "table {{.Name}}" --no-stream | grep -c Client_) != '0' ]
 	do
-		CPU=$(top -bn 2 | grep '^%Cpu' | tail -n 1 | gawk '{print $2+$4+$6}')		
+		CPU=$(top -bn 2 | grep '^%Cpu' | tail -n 1 | gawk '{print $2+$4+$6}')
 		ELAPSED_TIME=$(($SECONDS - $START_TIME))
-		clear
-		print_config
 		echo "Test running..."
 		echo
-		echo "$(($ELAPSED_TIME/60)) min $(($ELAPSED_TIME%60)) sec" 
+		echo "$(($ELAPSED_TIME/60)) min $(($ELAPSED_TIME%60)) sec"
 		echo
 		echo "CPU Usage: "$CPU%
-		docker stats --format "{{.Name}};{{.CPUPerc}};{{.MemPerc}};{{.MemUsage}};{{.PIDs}};{{.NetIO}};{{.BlockIO}};$ELAPSED_TIME;$CPU" --no-stream >> "$XIOTDIR/logs/$HOSTNAME/d $DELAY r $REQUESTS l $DATASIZE g $GATEWAYS G $GATEWAYROUTERS c $CLIENTS C $CLIENTROUTERS/running-stats.csv"
+		docker stats --format "{{.Name}};{{.CPUPerc}};{{.MemPerc}};{{.MemUsage}};{{.PIDs}};{{.NetIO}};{{.BlockIO}};$ELAPSED_TIME;$CPU" --no-stream >> "$XIOTDIR/logs/$HOSTNAME/$FIA d $DELAY r $REQUESTS l $DATASIZE m $MOTES g $GATEWAYS G $GATEWAYROUTERS c $CLIENTS C $CLIENTROUTERS/running-stats.csv"
 	done
-	clear
 	print_config
 	echo "Test ended!"
 	echo
-	echo "$(($ELAPSED_TIME/60)) min $(($ELAPSED_TIME%60)) sec" 
+	echo "$(($ELAPSED_TIME/60)) min $(($ELAPSED_TIME%60)) sec"
 	echo
-	cp /var/lib/docker/volumes/$DATAVOLUME/_data/*.csv "$XIOTDIR/logs/$HOSTNAME/d $DELAY r $REQUESTS l $DATASIZE g $GATEWAYS G $GATEWAYROUTERS c $CLIENTS C $CLIENTROUTERS/"
+	sudo cp /run/timeshift/backup/04-containers/volumes/xiotvolume/_data/*.csv "$XIOTDIR/logs/$HOSTNAME/$FIA d $DELAY r $REQUESTS l $DATASIZE m $MOTES g $GATEWAYS G $GATEWAYROUTERS c $CLIENTS C $CLIENTROUTERS/"
 	stop_all
 	prune_networks
 	prune_volumes
@@ -319,6 +330,7 @@ case $1 in
 	single)
 		print_config
 		single_network
+		collect
 		;;
 	print)
 		print_config
@@ -345,7 +357,7 @@ case $1 in
 		;;
 	kill)
 		kill_all
-		prune_networks	
+		prune_networks
 		prune_volumes
 		;;
 	*)
@@ -353,5 +365,3 @@ case $1 in
 		help
 		;;
 esac
-
-

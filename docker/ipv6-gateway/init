@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# Start cooja loading the cooja project
+java -mx512m -jar /contiki/tools/cooja/dist/cooja.jar -nogui="/xia-ipv6-rpl-udp.csc" -contiki="/contiki" > /dev/null &
+
+# Wait 3 delay times for cooja initialize
+sleep $(($DELAY * 3))
+
+# Start tunslip6
+/contiki/tools/tunslip6 -a 127.0.0.1 aaaa:`echo "obase=16;$GATEWAYROUTER"|bc`:`echo "obase=16;$GATEWAY"|bc`::1/64 &
+
+sleep $(($DELAY * 1))
+
+echo
+ip -6 route del default
+ip -6 route add default via dddd:`echo "obase=16;$GATEWAYROUTER"|bc`::2
+ip -6 route
+echo
+
+# Keep Alive
+tail -f /var/log/dmesg

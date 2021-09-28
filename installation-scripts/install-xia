@@ -1,14 +1,17 @@
 #!/bin/sh
 
 
-# Install the necessary support packages: 
-sudo apt-get -y install git libxml2 libxml2-dev libssl-dev libprotobuf-dev protobuf-compiler python-protobuf python-networkx python-nacl python-pip python-tk python-dev python-requests python-crypto build-essential openssl 
- 
-# Install the Twisted library if you intend to use the XIA Visualizer. 
+# Install the necessary support packages:
+sudo apt-get -y install git libxml2 libxml2-dev libssl-dev libprotobuf-dev protobuf-compiler python-protobuf python-networkx python-nacl python-pip python-tk python-dev python-requests python-crypto build-essential openssl
+
+# Install the Twisted library if you intend to use the XIA Visualizer.
 sudo apt-get -y install python-twisted
 
+# Install the necessary support packages:
+sudo apt-get install python3-sphinx
+
 # Home
-cd ~	
+cd ~
 
 if [ ! -d "xia-core" ]; then
 	git clone https://github.com/XIA-Project/xia-core.git
@@ -16,31 +19,31 @@ else
 	cd xia-core
 	git pull
 	make clean
-	cd ..	
+	cd ..
 fi
-  
+
 cd xia-core
-# NOTE: The XIA-V2 branch is the most up-to-date stable code and is recommended for evaluators. 
+# NOTE: The XIA-V2 branch is the most up-to-date stable code and is recommended for evaluators.
 git checkout xia-v2
 
-# Compilation 
+# Compilation
 ./configure
-# To enable debug builds: This will enable addition logging as well as allowing for use with gdb. 
+# To enable debug builds: This will enable addition logging as well as allowing for use with gdb.
 # DEBUG=1 ./configure
 make
 
-# Cleanup 
+# Cleanup
 #make clean
 
 # Add The XIA bin Directory To The Path (optional)
 export PATH=$PATH:~/xia-core/bin
 
-# If desired, man pages for the XIA utilities and APIs may be generated locally. This is an optional step. 
-# Install the following packages 
-sudo apt-get -y install doxygen help2man python-sphinx swig
+# If desired, man pages for the XIA utilities and APIs may be generated locally. This is an optional step.
+# Install the following packages
+#sudo apt-get -y install doxygen help2man python-sphinx swig
 
 # Build the documentation
-make doc
+#make doc
 
 # Make the man pages visible
-export MANPATH=$MANPATH:~/xia-core/doc/man
+#export MANPATH=$MANPATH:~/xia-core/doc/man

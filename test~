@@ -1,0 +1,48 @@
+#!/bin/sh
+
+#sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 1 -C 1 start
+#sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 1 -C 2 start
+#sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 1 -C 3 start
+#sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 1 -C 4 start
+#sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 1 -C 5 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 1 -C 7 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 1 -C 8 start
+
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 2 -C 1 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 2 -C 2 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 2 -C 3 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 2 -C 4 start
+
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 3 -C 2 start
+
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 4 -C 1 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 4 -C 2 start
+
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 5 -C 1 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 7 -C 1 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 1 -G 1 -c 8 -C 1 start
+
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 2 -G 1 -c 1 -C 1 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 2 -G 1 -c 1 -C 2 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 2 -G 1 -c 1 -C 3 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 2 -G 1 -c 1 -C 4 start
+
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 2 -G 1 -c 2 -C 1 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 2 -G 2 -c 2 -C 2 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 3 -G 2 -c 3 -C 2 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 3 -G 3 -c 3 -C 3 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 4 -G 3 -c 4 -C 3 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 8 -g 4 -G 4 -c 4 -C 4 start
+
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 16 -g 2 -G 1 -c 1 -C 1 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 16 -g 2 -G 1 -c 2 -C 1 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 16 -g 2 -G 2 -c 2 -C 2 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 32 -g 2 -G 1 -c 1 -C 1 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 32 -g 2 -G 1 -c 2 -C 1 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 32 -g 2 -G 2 -c 2 -C 2 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 64 -g 2 -G 1 -c 1 -C 1 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 64 -g 2 -G 1 -c 2 -C 1 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 64 -g 2 -G 2 -c 2 -C 2 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 64 -g 3 -G 2 -c 3 -C 2 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 64 -g 3 -G 3 -c 3 -C 3 start
+sudo ./xiot -a ipv6 -d 30 -r 10000 -l 64 -g 4 -G 3 -c 4 -C 3 start

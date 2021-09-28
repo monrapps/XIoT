@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# 25 clients, 5-35 gateways, 50-500 motes 
+
+sudo ./xiot -a xia -d 60 -r 10000 -l 8 -g 8 -G 5 -c 5 -C 5 start
+sleep 2m
+
+sudo ./xiot -a xia -d 60 -r 10000 -l 8 -g 9 -G 5 -c 5 -C 5 start
+sleep 2m
+
+sudo ./xiot -a xia -d 60 -r 10000 -l 8 -g 10 -G 5 -c 5 -C 5 start
+sleep 2m
+
+sudo ./xiot -a xia -d 60 -r 10000 -l 8 -g 11 -G 5 -c 5 -C 5 start
+sleep 2m
+
+sudo ./xiot -a xia -d 60 -r 10000 -l 8 -g 12 -G 5 -c 5 -C 5 start
+sleep 2m

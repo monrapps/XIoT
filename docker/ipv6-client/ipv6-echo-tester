@@ -1,0 +1,93 @@
+#!/usr/bin/python
+import sys
+import os
+import re
+import time
+
+import csv
+import string
+import random
+
+import socket
+
+MAXLEN = 120
+UDP_PORT = 3000
+
+def main():
+	if len(sys.argv) != 9:
+		usage()
+	else:
+		echotester()
+
+def usage():
+    sys.stdout = sys.stderr
+    print 'Usage: ipv6-echo-tester client clientrouter motes gateways gatewayrouters datasize requests timeout'
+    sys.exit(2) 
+
+def echotester():
+	SRC_CLIENT = int(sys.argv[1])
+	SRC_CLIENTROUTER = int(sys.argv[2])	
+	MOTES = int(sys.argv[3])	
+	GATEWAYS = int(sys.argv[4])
+	GATEWAYROUTERS = int(sys.argv[5])
+	DATASIZE = int(sys.argv[6])	
+	REQUESTS = int(sys.argv[7])
+	TIMEOUT = int(sys.argv[8])
+	
+	REQ = 0
+	while REQ < REQUESTS:
+		try:
+			REQ = REQ + 1
+			DST_GATEWAYROUTER = str(random.randint(1,GATEWAYROUTERS))
+			DST_GATEWAY = str(random.randint(1,GATEWAYS))
+			DST_MOTE = str('{:x}'.format(random.randint(2, MOTES + 1)))
+				
+			HOSTNAME = DST_MOTE+"."+DST_GATEWAY+"."+DST_GATEWAYROUTER
+
+			print HOSTNAME		
+			
+			text = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(DATASIZE))
+			latency = time.time() * 1000	
+			
+			UDP_IP = "aaaa:"+DST_GATEWAYROUTER+":"+DST_GATEWAY+"::212:740"+DST_MOTE+":"+DST_MOTE+":"+DST_MOTE+"0"+DST_MOTE
+			
+			udpsock = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM) # UDP
+   			udpsock.settimeout(TIMEOUT)
+   			print REQ, " : sending" , len(text), "bytes to", UDP_IP,"\n",HOSTNAME,":", text
+    			udpsock.sendto(text, (UDP_IP, UDP_PORT))
+    			print "waiting for udp-data"
+    			latency = time.time() * 1000
+    				
+        		data, addr = udpsock.recvfrom(120)	
+        		latency = (time.time() * 1000) - latency	
+			print "received", len(data), "bytes from", addr, ":", data     
+			print "latency: %d ms" % latency
+		
+			if data == text:
+				print "success"
+				result = "success"
+			else:
+				print "data error"
+				result = "data error"
+				
+			fields = [SRC_CLIENT,SRC_CLIENTROUTER,DST_MOTE,DST_GATEWAY,DST_GATEWAYROUTER,REQ,"%d" % latency,result]
+			
+			with open(r'/xiotvolume/clientslog.csv', 'a') as f:
+    				writer = csv.writer(f, delimiter=';')
+    				writer.writerow(fields)
+
+    			print " "
+    				
+    			time.sleep(1)
+
+
+		except socket.timeout:	
+			latency = (time.time() * 1000) - latency
+			print "udp-timeout"
+			result = "udp error"
+			fields = [SRC_CLIENT,SRC_CLIENTROUTER,DST_MOTE,DST_GATEWAY,DST_GATEWAYROUTER,REQ,"%d" % latency,result]
+			with open(r'/xiotvolume/clientslog.csv', 'a') as f:
+    				writer = csv.writer(f, delimiter=';')
+    				writer.writerow(fields)
+main()
+
