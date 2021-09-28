@@ -1,0 +1,37 @@
+#!/bin/sh
+
+#  -c Clients per Clients Routers
+#  -g Gateways per Gateways Routers
+#  -m Motes per Gateway
+#  -C Client Routers
+#  -G Gateway Routers
+#  -l Data size (bytes) # Datagram Payload Size
+#  -r Requests # Number of requests of each client
+#  -t Timeout (s) # Gateway to UDP network. There is no timeout on XIA network
+#  -v Data Volume # Folder name
+#  -d Delay (s) # Base delay variable for initializations
+#  -a Internet Architecture
+
+# Aumentar o número de client routers (C) e de clients por consequência (c) 
+
+
+sudo ./xiot -a xia -d 60 -r 10 -l 8 -g 15 -G 4 -c 1 -C 5 start
+sleep 2m
+
+sudo ./xiot -a xia -d 60 -r 10 -l 8 -g 15 -G 4 -c 2 -C 5 start
+sleep 2m
+
+sudo ./xiot -a xia -d 60 -r 10 -l 8 -g 15 -G 4 -c 3 -C 5 start
+sleep 2m
+
+sudo ./xiot -a xia -d 60 -r 10 -l 8 -g 15 -G 4 -c 4 -C 5 start
+sleep 2m
+
+sudo ./xiot -a xia -d 60 -r 10 -l 8 -g 15 -G 4 -c 5 -C 5 start
+sleep 2m
+
+sudo ./xiot -a xia -d 60 -r 10 -l 8 -g 15 -G 4 -c 6 -C 5 start
+sleep 2m
+
+sudo ./xiot -a xia -d 60 -r 10 -l 8 -g 15 -G 4 -c 7 -C 5 start
+

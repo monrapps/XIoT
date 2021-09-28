@@ -1,0 +1,90 @@
+#!/bin/sh
+
+#  -c Clients per Clients Routers
+#  -g Gateways per Gateways Routers
+#  -m Motes per Gateway
+#  -C Client Routers
+#  -G Gateway Routers
+#  -l Data size (bytes) # Datagram Payload Size
+#  -r Requests # Number of requests of each client
+#  -t Timeout (s) # Gateway to UDP network. There is no timeout on XIA network
+#  -v Data Volume # Folder name
+#  -d Delay (s) # Base delay variable for initializations
+#  -a Internet Architecture
+
+# 5-25 clients, 50 gateways, 500 motes
+
+
+#sudo ./xiot -a ipv6 -d 60 -r 10000 -l 8 -g 10 -G 5 -c 1 -C 5 start
+#sleep 2m
+
+#sudo ./xiot -a ipv6 -d 60 -r 10000 -l 8 -g 10 -G 5 -c 2 -C 5 start
+#sleep 2m
+
+#sudo ./xiot -a ipv6 -d 60 -r 10000 -l 8 -g 10 -G 5 -c 3 -C 5 start
+#sleep 2m
+
+#sudo ./xiot -a ipv6 -d 60 -r 10000 -l 8 -g 10 -G 5 -c 4 -C 5 start
+#sleep 2m
+
+#sudo ./xiot -a ipv6 -d 60 -r 10000 -l 8 -g 10 -G 5 -c 5 -C 5 start
+#sleep 2m
+
+#sudo ./xiot -a ipv6 -d 60 -r 10000 -l 8 -g 10 -G 5 -c 6 -C 5 start
+#sleep 2m
+
+#sudo ./xiot -a ipv6 -d 60 -r 10000 -l 8 -g 10 -G 5 -c 7 -C 5 start
+#sleep 2m
+
+# 25 clients, 5-35 gateways, 50-500 motes 
+
+#sudo ./xiot -a ipv6 -d 60 -r 10000 -l 8 -g 1 -G 5 -c 5 -C 5 start
+#sleep 2m
+
+#sudo ./xiot -a ipv6 -d 60 -r 10000 -l 8 -g 2 -G 5 -c 5 -C 5 start
+#sleep 2m
+
+#sudo ./xiot -a ipv6 -d 60 -r 10000 -l 8 -g 3 -G 5 -c 5 -C 5 start
+#sleep 2m
+
+#sudo ./xiot -a ipv6 -t 3 -d 60 -r 10000 -l 8 -g 4 -G 5 -c 5 -C 5 start
+#sleep 2m
+
+#sudo ./xiot -a ipv6 -d 60 -r 10000 -l 8 -g 5 -G 5 -c 5 -C 5 start
+#sleep 2m
+
+#sudo ./xiot -a ipv6 -d 60 -r 10000 -l 8 -g 6 -G 5 -c 5 -C 5 start
+#sleep 2m
+
+#sudo ./xiot -a ipv6 -d 60 -r 10000 -l 8 -g 7 -G 5 -c 5 -C 5 start
+#sleep 2m
+
+#sudo ./xiot -a ipv6 -d 60 -r 10000 -l 8 -g 8 -G 5 -c 5 -C 5 start
+#sleep 2m
+
+#sudo ./xiot -a ipv6 -d 60 -r 10000 -l 8 -g 9 -G 5 -c 5 -C 5 start
+#sleep 2m
+
+#sudo ./xiot -a ipv6 -d 60 -r 10000 -l 8 -g 10 -G 5 -c 5 -C 5 start
+#sleep 2m
+
+sudo ./xiot -a ipv6 -t 3 -d 60 -r 10000 -l 8 -g 11 -G 5 -c 5 -C 5 start
+sleep 2m
+
+#sudo ./xiot -a ipv6 -d 60 -r 10000 -l 8 -g 12 -G 5 -c 5 -C 5 start
+#sleep 2m
+
+# 25 clients, 50 gateways, 500 motes
+
+
+#sudo ./xiot -a ipv6 -d 60 -r 10000 -l 16 -g 10 -G 5 -c 5 -C 5 start
+#sleep 2m
+
+#sudo ./xiot -a ipv6 -d 60 -r 10000 -l 32 -g 10 -G 5 -c 5 -C 5 start
+#sleep 2m
+
+#sudo ./xiot -a ipv6 -d 60 -r 10000 -l 64 -g 10 -G 5 -c 5 -C 5 start
+#sleep 2m
+
+
+

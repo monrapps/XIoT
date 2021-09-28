@@ -1,0 +1,40 @@
+#!/bin/sh
+
+sleep $(($DELAY * 3))
+
+# Configure Routes
+ip -6 route del default
+
+if [ 'gateways' = $ROUTE ]
+  then
+	#for i in $(seq 1 $GATEWAYROUTERS)
+	#do
+	for i in $(seq 1 $GATEWAYS)
+	do			
+		ip -6 route add aaaa:`echo "obase=16;$GATEWAYSROUTER"|bc`:`echo "obase=16;$i"|bc`::/64 via dddd:`echo "obase=16;$GATEWAYSROUTER"|bc`::`echo "obase=16;"$(( 2 + $i ))""|bc`
+	done
+	#done
+	for i in $(seq 1 $CLIENTROUTERS)
+	do		
+		ip -6 route add cccc:`echo "obase=16;$i"|bc`::/64 via bbbb::`echo "obase=16;"$(( 2 + $GATEWAYROUTERS + $i ))""|bc`
+	done
+fi
+
+if [ 'clients' = $ROUTE ]
+  then
+  	for i in $(seq 1 $GATEWAYROUTERS)
+	do
+		for j in $(seq 1 $GATEWAYS)
+		do
+			ip -6 route add aaaa:`echo "obase=16;$i"|bc`:`echo "obase=16;$j"|bc`::/64 via bbbb::`echo "obase=16;"$(( 2 + $i ))""|bc`
+		done
+	done
+fi
+
+echo
+ip -6 route
+echo
+
+# Keep Alive
+tail -f /var/log/dmesg
+
