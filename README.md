@@ -1,7 +1,7 @@
 <h1 align="center"> XIoT </h1>
 
 
-Para acessar o help dp programa digite:
+Para acessar o help do programa digite:
 
 
 ```bash
@@ -19,7 +19,7 @@ Uma delas, roda somente o **IPv6 sem o Gateway Service**. A outra roda o **XIA +
 1) Clone o diretorio do XIoT:
 
 ```bash
-https://jira.inatel.br/bitbucket/projects/ILAB/repos/xiot/browse
+git clone https://github.com/monrapps/XIoT.git
 ```
 
 
