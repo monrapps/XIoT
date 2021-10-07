@@ -22,6 +22,7 @@ Uma delas, roda somente o **IPv6 sem o Gateway Service**. A outra roda o **XIA +
 git clone https://github.com/monrapps/XIoT.git
 ```
 
+Se quiser rodar somente no Docker, passe para o passo 3).
 
 
 2) Entre na pasta /installation-scripts$ e execute os scripts que nela estão.
@@ -33,7 +34,7 @@ Ou seja. na ordem:
 sudo sh install-devel
 ```
 
-Pode ser que de algum erro na instalação do **gcc++-7**. Veja na Internet como contornar, mas é preciso que ele esteja instalado com sucesso para que o xia-compile na maquina local. 
+Pode ser que de algum erro na instalação do **gcc++-7**. Veja na Internet como contornar, mas é preciso que ele esteja instalado com sucesso para que o xia-compile na máquina local. 
 
 
 ```bash
