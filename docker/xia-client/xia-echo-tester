@@ -37,16 +37,22 @@ def echotester():
 	DATASIZE = int(sys.argv[6])	
 	REQUESTS = int(sys.argv[7])
 	
+	print 'Starting xia-client!'
+	
+	INITIAL = time.time()
+	
 	REQ = 0
 	while REQ < REQUESTS:
-		try:			
+		try:	
 			DST_GATEWAYROUTER = str(random.randint(1,GATEWAYROUTERS))
 			DST_GATEWAY = str(random.randint(1,GATEWAYS))
 			DST_MOTE = str(random.randint(1,MOTES))
 			
 			HOSTNAME = DST_MOTE+"."+DST_GATEWAY+"."+DST_GATEWAYROUTER
 			
-			print HOSTNAME
+			print "Time = ", time.time()-INITIAL
+			
+			print "Destination: Mote = ", DST_MOTE, ". Gateway = " , DST_GATEWAY , ". GatewayRouter = ", DST_GATEWAYROUTER
 			
 			sock = Xsocket(XSOCK_DGRAM)		
 			dag = XgetDAGbyName(HOSTNAME)
@@ -58,7 +64,7 @@ def echotester():
 			Xsendto(sock, text, 0, dag)
 			REQ = REQ + 1
 		
-			print REQ, " : sending" , len(text), "bytes to", dag,"\n",HOSTNAME,":", text
+			print REQ, " : sending" , len(text), "bytes to socket: ",sock, " with dag ", dag,"\n","Data sent: ", text
 		
 			(data, sdag) = Xrecvfrom(sock, MAXLEN, 0)	
 			latency = (time.time() * 1000) - latency
@@ -66,6 +72,7 @@ def echotester():
 	
 			print "received", len(data), "bytes from", sdag,":", data   			
 			print "latency: %d ms" % latency
+			
 		
 			if data == text:
 				print "success"
@@ -77,11 +84,18 @@ def echotester():
 				print "data error"
 				result = "data error"
 				
-			fields = [SRC_CLIENT,SRC_CLIENTROUTER,DST_MOTE,DST_GATEWAY,DST_GATEWAYROUTER,REQ,"%d" % latency,result]
+			fields = [SRC_CLIENT,SRC_CLIENTROUTER,DST_MOTE,DST_GATEWAY,DST_GATEWAYROUTER,time.time()-INITIAL,"%d" % latency,result]
+			
+			os.chmod("/xiotvolume/clientslog.csv", 0o777)
 			
 			with open(r'/xiotvolume/clientslog.csv', 'a') as f:
     				writer = csv.writer(f, delimiter=';')
     				writer.writerow(fields)
+    				
+    			print " "
+    			
+    			time.sleep(1)    				
+    			
 		except:
 			print "Xsocket error"
 			fields = [SRC_CLIENT,SRC_CLIENTROUTER,'','','','','',"Xsocket error"]

@@ -12,7 +12,7 @@ from cycler import cycler
 """
 
 exemplo para executar o script
-python ./collector_Python36.py <Path_of_Result> <Path_To_Save_Results>
+sudo python3 ./XIoTanalyzer.py <Diretório de saída com os resultados running-stats.csv>
 
 """
 
@@ -21,11 +21,13 @@ def convertNumbers(dataframe):
      dataframe['cpu'] = dataframe['cpu'].astype(float)
      dataframe['net I'] = dataframe['net I'].str.replace('k','000')
      dataframe['net I'] = dataframe['net I'].str.replace('M','000000')
+     dataframe['net I'] = dataframe['net I'].str.replace('G','000000000') #Added
      dataframe['net I'] = dataframe['net I'].str.replace('B','')
      dataframe['net I'] = dataframe['net I'].str.replace('.','')
      dataframe['net I'] = dataframe['net I'].astype(float)
      dataframe['net O'] = dataframe['net O'].str.replace('k','000')
      dataframe['net O'] = dataframe['net O'].str.replace('M','000000')
+     dataframe['net O'] = dataframe['net O'].str.replace('G','000000000') #Added
      dataframe['net O'] = dataframe['net O'].str.replace('B','')
      dataframe['net O'] = dataframe['net O'].str.replace('.','')
      dataframe['net O'] = dataframe['net O'].astype(float)
@@ -111,7 +113,7 @@ def convertNumbers(dataframe):
     
 
 def plotGraphs(item, dir, dataframe):
-    #print('plotting throughput ' + item)
+    print('plotting throughput ' + item)
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
     fig1  = plt.figure() 
     ax0 = fig1.add_subplot(111)
@@ -209,19 +211,19 @@ def main(dir):
  except:
     print('there is no running-stats.csv')
     return None
- #print(df)
+ print(df)
 
  df = convertNumbers(df)
 
  df = df.sort_values(by=['component', 'time'])
  grouped = df.groupby(df['component'])
- #print(df)
- #print(df['component'].unique())
+ print(df)
+ print(df['component'].unique())
 
  for item in df['component'].unique():
-     #print(item)
+     print(item)
      groupDataFrame = grouped.get_group(item)
-     #print(groupDataFrame)
+     print(groupDataFrame)
      print('plotting graphs for '+ item)
      plotGraphs(item, dir, groupDataFrame)
      #plotThroughput(item, dir, groupDataFrame)

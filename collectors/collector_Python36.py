@@ -12,7 +12,8 @@ import xlsxwriter
 """
 
 exemplo para executar o script
-sudo ./collector /home/alberti/Desktop/XID2b/
+sudo python3 ./collector_Python36.py <Arquitetura desejada> <Pasta com os resultados>
+sudo python3 ./collector_Python36.py XIAIPv6 /home/user/workspace/XIoT/logs/computer/
 
 """
 

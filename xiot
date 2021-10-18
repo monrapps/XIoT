@@ -314,7 +314,7 @@ collect()
 	echo
 	echo "$(($ELAPSED_TIME/60)) min $(($ELAPSED_TIME%60)) sec"
 	echo
-	sudo cp /run/timeshift/backup/04-containers/volumes/xiotvolume/_data/*.csv "$XIOTDIR/logs/$HOSTNAME/$FIA d $DELAY r $REQUESTS l $DATASIZE m $MOTES g $GATEWAYS G $GATEWAYROUTERS c $CLIENTS C $CLIENTROUTERS/"
+	sudo cp /var/lib/docker/volumes/$DATAVOLUME/_data/*.csv "$XIOTDIR/logs/$HOSTNAME/$FIA d $DELAY r $REQUESTS l $DATASIZE m $MOTES g $GATEWAYS G $GATEWAYROUTERS c $CLIENTS C $CLIENTROUTERS/"
 	stop_all
 	prune_networks
 	prune_volumes
