@@ -35,6 +35,8 @@ def echotester():
 	TIMEOUT = int(sys.argv[8])
 	
 	REQ = 0
+	INITIAL = time.time()
+	
 	while REQ < REQUESTS:
 		try:
 			REQ = REQ + 1
@@ -43,6 +45,8 @@ def echotester():
 			DST_MOTE = str('{:x}'.format(random.randint(2, MOTES + 1)))
 				
 			HOSTNAME = DST_MOTE+"."+DST_GATEWAY+"."+DST_GATEWAYROUTER
+			
+			print "Time = ", time.time()-INITIAL
 
 			print HOSTNAME		
 			
@@ -70,7 +74,7 @@ def echotester():
 				print "data error"
 				result = "data error"
 				
-			fields = [SRC_CLIENT,SRC_CLIENTROUTER,DST_MOTE,DST_GATEWAY,DST_GATEWAYROUTER,REQ,"%d" % latency,result]
+			fields = [SRC_CLIENT,SRC_CLIENTROUTER,DST_MOTE,DST_GATEWAY,DST_GATEWAYROUTER,time.time()-INITIAL,"%d" % latency,result]
 			
 			with open(r'/xiotvolume/clientslog.csv', 'a') as f:
     				writer = csv.writer(f, delimiter=';')
@@ -80,12 +84,11 @@ def echotester():
     				
     			time.sleep(1)
 
-
 		except socket.timeout:	
 			latency = (time.time() * 1000) - latency
 			print "udp-timeout"
 			result = "udp error"
-			fields = [SRC_CLIENT,SRC_CLIENTROUTER,DST_MOTE,DST_GATEWAY,DST_GATEWAYROUTER,REQ,"%d" % latency,result]
+			fields = [SRC_CLIENT,SRC_CLIENTROUTER,DST_MOTE,DST_GATEWAY,DST_GATEWAYROUTER,time.time()-INITIAL,"%d" % latency,result]
 			with open(r'/xiotvolume/clientslog.csv', 'a') as f:
     				writer = csv.writer(f, delimiter=';')
     				writer.writerow(fields)
