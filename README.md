@@ -1,7 +1,7 @@
 <h1 align="center"> XIoT </h1>
 
 
-Para acessar o help dp programa digite:
+Para acessar o help do programa digite:
 
 
 ```bash
@@ -19,9 +19,10 @@ Uma delas, roda somente o **IPv6 sem o Gateway Service**. A outra roda o **XIA +
 1) Clone o diretorio do XIoT:
 
 ```bash
-https://jira.inatel.br/bitbucket/projects/ILAB/repos/xiot/browse
+git clone https://github.com/monrapps/XIoT.git
 ```
 
+Se quiser rodar somente no Docker, passe para o passo 3).
 
 
 2) Entre na pasta /installation-scripts$ e execute os scripts que nela estão.
@@ -33,7 +34,7 @@ Ou seja. na ordem:
 sudo sh install-devel
 ```
 
-Pode ser que de algum erro na instalação do **gcc++-7**. Veja na Internet como contornar, mas é preciso que ele esteja instalado com sucesso para que o xia-compile na maquina local. 
+Pode ser que de algum erro na instalação do **gcc++-7**. Veja na Internet como contornar, mas é preciso que ele esteja instalado com sucesso para que o xia-compile na máquina local. 
 
 
 ```bash
@@ -63,7 +64,7 @@ sudo ./xiot build
 ```
 
 
-Observe se ocorre algum erro ao longo da criação das imagens, principalmente no que tange a compilação do xia-core na imagem xia-base. Observe que o que é feito aqui é similiar a instalação loca, só que dentro dos containers.
+Observe se ocorre algum erro ao longo da criação das imagens, principalmente no que tange a compilação do xia-core na imagem xia-base. Observe que o que é feito aqui é similiar a instalação local (passo 2), só que dentro dos containers.
 
 Se houver erro, pode ser necessário editar os arquivos Dockerfile dentro de cada pasta individual. Nelas, também existem Init que são executados na construção das imagens.
 
