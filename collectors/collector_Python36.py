@@ -77,10 +77,10 @@ def main(dir, architecture):
                 for li in lines:
                     data = li.split(";")
                     gw_tcnt = gw_tcnt + 1
-                    if data[5][0] != 's':
+                    if data[6][0] != 's':
                         gw_ecnt = gw_ecnt + 1
                     else:
-                        gw_tmean = gw_tmean + int(data[4])
+                        gw_tmean = gw_tmean + int(data[5])
                         gw_okcnt = gw_okcnt + 1
                 f.close()
 
