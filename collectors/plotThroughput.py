@@ -32,7 +32,7 @@ def plotGraphs(item, dataframe, componentType):
     ax0.plot(Time, OutputTraffic, label='Throughput')
 
     ax0.set_xlabel('Time', loc='center')
-    ax0.set_ylabel('Throughput [bits/second]', loc='center')
+    ax0.set_ylabel('Throughput [bits/sec]', loc='center')
 
     ax0.set_box_aspect(1)
     ax0.grid(True, linestyle='-.')
