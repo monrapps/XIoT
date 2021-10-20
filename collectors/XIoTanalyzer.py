@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import sys
-from os import listdir
+from os import listdir, mkdir, path, remove
 from os.path import isdir, join
 import pandas as pd
 import csv
@@ -37,81 +37,6 @@ def convertNumbers(dataframe):
     dataframe['time'] = dataframe['time'].astype(float)
 
     return dataframe
-
-# def plotCPUGraph(item, dir, dataframe):
-#     #print('plotting CPU graph ' + item)
-#     fig  = plt.figure()
-#     ax0 = fig.add_subplot(111)
-
-
-#     Time = np.array(dataframe['time'])
-#     CPU = []
-
-#     for index, row in dataframe.iterrows():
-#         CPU.append(row['cpu'])
-#     CPU = np.array(CPU)
-#     ax0.plot(Time, CPU)
-#     #ax0.errorbar(inputSamples, input3FIXP, yerr = input3FIXPIC, label='3 FIXPs Switches', fmt='o')
-
-#     ax0.set_xlabel('Time', loc = 'center')
-#     ax0.set_ylabel('CPU', loc = 'center')
-#     #ax0.set_xlim(0,1400)
-#     #ax0.set_ylim(160,260)
-#     ax0.set_box_aspect(1)
-#     ax0.grid(True,linestyle='-.')
-
-
-#     #fig.tight_layout()
-#     #legend = ax0.legend(loc = 'lower left', shadow=True, fontsize=10)
-
-#     fig.savefig(dir+item+' CPU.png', format='png')
-#     plt.close(fig)
-#     del fig
-#     plt.clf()
-
-
-# def plotThroughput(item, dir, dataframe):
-#     #print('plotting throughput ' + item)
-#     fig, (ax1,ax2) = plt.subplots(2)
-
-#     Time = np.array(dataframe['time'])
-#     Input = []
-#     Output = []
-#     for index, row in dataframe.iterrows():
-#         #print(row['time'])
-#         #print(row['net I'])
-#         #print(row['net O'])
-#         #print('Resultado I: ' + str(row['net I']/row['time']))
-#         #print('Resultado O: ' + str(row['net O']/row['time']))
-
-#     Input = np.array(Input)
-#     Output = np.array(Output)
-
-#     ax1.plot(Time, Input, label='Input')
-#     ax2.plot(Time, Output, label='Output')
-#     #ax1.set_ylim(0,600)
-#     #ax2.set_ylim(0,600)
-#     #ax0.errorbar(inputSamples, input3FIXP, yerr = input3FIXPIC, label='3 FIXPs Switches', fmt='o')
-
-#     ax1.set_xlabel('Time', loc = 'center')
-#     ax1.set_ylabel('Input Throughput', loc = 'center')
-#     ax2.set_ylabel('Output Throughput', loc = 'center')
-#     #ax0.set_xlim(0,1400)
-#     #ax0.set_ylim(160,260)
-#     ax1.set_box_aspect(1)
-#     ax1.grid(True,linestyle='-.')
-#     ax2.set_box_aspect(1)
-#     ax2.grid(True,linestyle='-.')
-
-
-#     #fig.tight_layout()
-#     legend = ax1.legend(loc = 'upper right', shadow=True, fontsize=10)
-#     legend = ax2.legend(loc = 'upper right', shadow=True, fontsize=10)
-
-#     fig.savefig(dir+item+' Throughput.png', format='png')
-#     plt.close(fig) #where f is the figure
-#     del fig
-#     plt.clf()
 
 
 def plotGraphs(item, dir, dataframe):
@@ -190,8 +115,8 @@ def plotGraphs(item, dir, dataframe):
     legend = ax4.legend(loc='best', shadow=True, fontsize=10)
     legend = ax0.legend(loc='best', shadow=True, fontsize=10)
 
-    fig.savefig(dir+item+' Network.png', format='png')
-    fig1.savefig(dir+item+' CPU.png', format='png')
+    fig.savefig('./Graphs/'+dir + '/' + item + ' Network.png', format='png')
+    fig1.savefig('./Graphs/'+dir + '/' + item + ' CPU.png', format='png')
     plt.close(fig)  # where f is the figure
     del fig
     plt.close(fig1)  # where f is the figure
@@ -200,39 +125,57 @@ def plotGraphs(item, dir, dataframe):
 
 
 def main(dir):
-    with open(dir+'running-stats.csv') as f:
-        data = f.read().replace('/', ';')
+    print(dir)
+    subdirs = [f for f in listdir(dir)]
+    subdirs = [f for f in subdirs]
 
-    # print(data)
-    with open(dir+'newfile.csv', 'w') as f:
-        f.write(data)
+    for s in subdirs:
+        print(s)
+        if not path.exists('./Graphs/'+s):
+            mkdir('./Graphs/'+s)
+            print('Created ./Graphs/' + s + ' path')
 
-    try:
-        df = pd.read_csv(dir+'newfile.csv', sep=";", engine='python', header=None, names=[
-                         'component', 'cpu', 'ram', 'ram I', 'ram O', 'ram avg', 'net I', 'net O', 'disk I', 'disk O', 'time', 'cpu avg'])
-    except:
-        print('there is no running-stats.csv')
-        return None
-    print(df)
+        with open(dir+s+'/running-stats.csv') as f:
+            data = f.read().replace('/', ';')
 
-    df = convertNumbers(df)
+        # print(data)
+        with open(dir+s+'/newfile.csv', 'w') as f:
+            f.write(data)
 
-    df = df.sort_values(by=['component', 'time'])
-    grouped = df.groupby(df['component'])
-    print(df)
-    print(df['component'].unique())
+        try:
+            df = pd.read_csv(dir+s+'/newfile.csv', sep=";", engine='python', header=None, names=[
+                'component', 'cpu', 'ram', 'ram I', 'ram O', 'ram avg', 'net I', 'net O', 'disk I', 'disk O', 'time', 'cpu avg'])
+        except:
+            print('there is no running-stats.csv')
+            return None
+        try:
+            remove(dir+s+'/newfile.csv')
+        except:
+            print('no newfile to delete')
 
-    for item in df['component'].unique():
-        print(item)
-        groupDataFrame = grouped.get_group(item)
-        print(groupDataFrame)
-        print('plotting graphs for ' + item)
-        plotGraphs(item, dir, groupDataFrame)
-        #plotThroughput(item, dir, groupDataFrame)
+        print(df)
+
+        df = convertNumbers(df)
+
+        df = df.sort_values(by=['component', 'time'])
+        grouped = df.groupby(df['component'])
+        print(df)
+        print(df['component'].unique())
+
+        for item in df['component'].unique():
+            print(item)
+            groupDataFrame = grouped.get_group(item)
+            print(groupDataFrame)
+            print('plotting graphs for ' + item)
+            plotGraphs(item, s, groupDataFrame)
+            #plotThroughput(item, dir, groupDataFrame)
 
 
 if __name__ == "__main__":
     if(len(sys.argv) > 1):
+        if not path.exists('./Graphs/'):
+            mkdir('./Graphs/')
+            print('Created Graphs path')
         DIR = sys.argv[1]
         main(DIR)
 
