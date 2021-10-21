@@ -65,7 +65,7 @@ def main(dir):
                 print('there is no clientslog.csv')
                 return None
             # print(df)
-            if len(dfClient) > 0:
+            if len(df) > 0:
                 df.loc[df['status'] == 'success']
                 df = df.sort_values(by=['time'])
                 # print(df)
