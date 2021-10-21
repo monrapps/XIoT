@@ -49,57 +49,62 @@ def plotGraphs(item, dataframe, componentType):
 
 def main(dir):
     # Loop through IP folders
-    print(dir)
+    # print(dir)
     subdirs = [f for f in listdir(dir)]
     subdirsIPv6 = [f for f in subdirs if f[0] == 'i']
 
-    # print(subdirsIPv6)
+    # print(len(subdirsIPv6))
+    if len(subdirsIPv6) > 0:
+        for s in subdirsIPv6:
+            # print(s)
+            df = pd.DataFrame()
+            try:
+                df = pd.read_csv(dir+s+'/clientslog.csv', sep=";", engine='python', header=None, names=[
+                    'src_client', 'src_clientrouter', 'dst_mote', 'dst_gateway', 'dst_gatrouter', 'time', 'latency', 'status'])
+            except:
+                print('there is no clientslog.csv')
+                return None
+            # print(df)
+            if len(dfClient) > 0:
+                df.loc[df['status'] == 'success']
+                df = df.sort_values(by=['time'])
+                # print(df)
 
-    for s in subdirsIPv6:
-        print(s)
-        try:
-            df = pd.read_csv(dir+s+'/clientslog.csv', sep=";", engine='python', header=None, names=[
-                'src_client', 'src_clientrouter', 'dst_mote', 'dst_gateway', 'dst_gatrouter', 'time', 'latency', 'status'])
-        except:
-            print('there is no clientslog.csv')
-            return None
-        # print(df)
-        df.loc[df['status'] == 'success']
-        df = df.sort_values(by=['time'])
-        # print(df)
-
-        print('plotting graphs for ' + s)
-        plotGraphs(s, df, 'Client')
+                print('plotting graphs for ' + s)
+                plotGraphs(s, df, 'Client')
 
     # Loop through XIA folders
 
     subdirsXIA = [f for f in subdirs if f[0] == 'x']
 
-    for s in subdirsXIA:
-        print(s)
-        try:
-            dfClient = pd.read_csv(dir+s+'/clientslog.csv', sep=";", engine='python', header=None, names=[
-                'src_client', 'src_clientrouter', 'dst_mote', 'dst_gateway', 'dst_gatrouter', 'time', 'latency', 'status'])
-        except:
-            print('there is no clientslog.csv')
-            return None
+    if len(subdirsXIA) > 0:
+        for s in subdirsXIA:
+            print(s)
+            dfClient = pd.DataFrame()
+            dfGateway = pd.DataFrame()
+            try:
+                dfClient = pd.read_csv(dir+s+'/clientslog.csv', sep=";", engine='python', header=None, names=[
+                    'src_client', 'src_clientrouter', 'dst_mote', 'dst_gateway', 'dst_gatrouter', 'time', 'latency', 'status'])
+            except:
+                print('there is no clientslog.csv')
+                return None
 
-        try:
-            dfGateway = pd.read_csv(dir+s+'/gatewayslog.csv', sep=";", engine='python', header=None, names=[
-                'MOTE', 'gateway', 'GATEWAYROUTER', 'REQ', 'time', 'latency', 'status'])
-        except:
-            print('there is no gatewayslog.csv')
-            return None
-        # print(df)
-        dfClient.loc[df['status'] == 'success']
-        dfGateway.loc[df['status'] == 'success']
-        dfClient = dfClient.sort_values(by=['time'])
-        dfGateway = dfGateway.sort_values(by=['time'])
-        # print(dfGateway)
+            try:
+                dfGateway = pd.read_csv(dir+s+'/gatewayslog.csv', sep=";", engine='python', header=None, names=[
+                    'MOTE', 'gateway', 'GATEWAYROUTER', 'REQ', 'time', 'latency', 'status'])
+            except:
+                print('there is no gatewayslog.csv')
+                return None
 
-        print('plotting graphs for ' + s)
-        plotGraphs(s, dfClient, 'Client')
-        plotGraphs(s, dfGateway, 'Gateway')
+            print('plotting graphs for ' + s)
+            if len(dfClient) > 0:
+                dfClient.loc[dfClient['status'] == 'success']
+                dfClient = dfClient.sort_values(by=['time'])
+                plotGraphs(s, dfClient, 'Client')
+            if len(dfGateway) > 0:
+                dfGateway.loc[dfGateway['status'] == 'success']
+                dfGateway = dfGateway.sort_values(by=['time'])
+                plotGraphs(s, dfGateway, 'Gateway')
 
 
 if __name__ == "__main__":
